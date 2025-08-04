@@ -7,14 +7,25 @@
     align-items: center;
     height: 75px;
     width: 100%;
+    border-bottom: 1px solid grey;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+
 }
 .logo-text {
+    position: absolute;
+    height: 10px;
+    left: 20px;
     color: #16a34a;
 }
+.logo-text a {
+    color: #16a34a;
+    padding: px;
+}
 .nav-bar-buttons {
-    position: relative;
+    position: absolute;
     display: flex;
     justify-content: space-evenly;
+    width: 500px;
     left: 250px;
     align-items: center;
 }
