@@ -1,71 +1,70 @@
 * {
-    background-color: white;
-    text-decoration: none;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: white;
+  text-decoration: none;
 }
-.nav-bar {
-    display: flex;
-    align-items: center;
-    height: 75px;
-    width: 100%;
-    border-bottom: 1px solid grey;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 
+.nav-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 75px;
+  padding: 0 40px;
+  width: 100%;
+  border-bottom: 1px solid grey;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
-.logo-text {
-    position: absolute;
-    height: 10px;
-    left: 20px;
-    color: #16a34a;
-}
+
 .logo-text a {
-    color: #16a34a;
+  color: #16a34a;
+  font-size: 22px;
+  font-weight: bold;
 }
+
 .nav-bar-buttons {
-    position: absolute;
-    display: flex;
-    justify-content: space-evenly;
-    width: 500px;
-    left: 250px;
-    align-items: center;
+  display: flex;
+  gap: 30px;
 }
+
 .nav-bar-buttons a {
-    padding: 5px;
-    color: grey;
+  color: grey;
+  font-weight: 500;
+  transition: color 0.3s;
 }
+
 .nav-bar-buttons a:hover {
-    padding: 5px;
-    color: black;
+  color: black;
 }
+
 .register-login {
-    position: absolute;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    left: 1000px;
+  display: flex;
+  gap: 10px;
 }
-.sign-in {
-    width: 75px;
-    height: 35px;
-    color: green;
-    background-color: white;
-    border-radius: 8px;
-    border: 0.5px solid #16a34a;
-    font-weight: bold;
-}
-.sign-in:hover {
-    scale: 1.1;
-    transition: 0.5s ease-in-out;
-}
+
+.sign-in,
 .get-started {
-    width: 100px;
-    height: 35px;
-    color: white;
-    background-color: green;
-    border-radius: 8px;
-    border: 0.5px solid green;
-    font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: transform 0.3s ease;
+  text-align: center;
 }
+
+.sign-in {
+  color: #16a34a;
+  background-color: white;
+  border: 1px solid #16a34a;
+}
+
+.get-started {
+  color: white;
+  background-color: #16a34a;
+  border: 1px solid #16a34a;
+}
+
+.sign-in:hover,
 .get-started:hover {
-    scale: 1.1;
-    transition: 0.5s ease-in-out;
+  transform: scale(1.1);
 }
