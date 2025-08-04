@@ -1,3 +1,7 @@
+* {
+    background-color: white;
+    text-decoration: none;
+}
 .nav-bar {
     display: flex;
     align-items: center;
@@ -10,15 +14,16 @@
 .nav-bar-buttons {
     position: relative;
     display: flex;
+    justify-content: space-evenly;
     left: 250px;
     align-items: center;
 }
 .nav-bar-buttons a {
-    padding: 50px;
+    padding: 5px;
     color: grey;
 }
 .nav-bar-buttons a:hover {
-    padding: 50px;
+    padding: 5px;
     color: black;
 }
 .register-login {
