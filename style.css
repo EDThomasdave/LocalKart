@@ -2,14 +2,16 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  background-color: white;
   text-decoration: none;
 }
 
 .nav-bar {
   display: flex;
+  position: fixed;
+  background-color: white;
   justify-content: space-between;
   align-items: center;
+  top: 0px;
   height: 75px;
   padding: 0 40px;
   width: 100%;
@@ -21,6 +23,7 @@
   color: #16a34a;
   font-size: 22px;
   font-weight: bold;
+  text-decoration: none;
 }
 
 .nav-bar-buttons {
@@ -32,6 +35,7 @@
   color: grey;
   font-weight: 500;
   transition: color 0.3s;
+  text-decoration: none;
 }
 
 .nav-bar-buttons a:hover {
@@ -40,12 +44,13 @@
 
 .register-login {
   display: flex;
+  position: relative;
   gap: 10px;
 }
 
 .sign-in,
 .get-started {
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-radius: 8px;
   font-weight: bold;
   transition: transform 0.3s ease;
@@ -67,4 +72,11 @@
 .sign-in:hover,
 .get-started:hover {
   transform: scale(1.1);
+}
+.mini-intro {
+    background: radial-gradient(circle, #d9ffe7, white);
+    height: 500px;
+    width: 100%;
+    color: black;
+    padding: 100px;
 }
