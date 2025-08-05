@@ -128,5 +128,24 @@
   outline: none;
   border-color: #16a34a;
   box-shadow: 0 0 5px rgba(22, 163, 74, 0.5);
-
+}
+.mini-page-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 20px auto 0 auto;
+  width: 700px;
+  gap: 10px;
+}
+.mini-page-tags a {
+  background-color: rgba(250, 255, 251, 0.687);
+  color: grey;
+  font-size: small;
+  margin: 20px;
+  padding: 2px;
+  border-radius: 10px;
+}
+.mini-page-tags a i {
+  margin: 5px;
+  color: #16a34a;
 }
