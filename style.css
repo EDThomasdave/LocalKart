@@ -31,8 +31,10 @@
 }
 
 .nav-bar-buttons a {
-  color: grey;
-  font-weight: 500;
+  color: rgb(84, 84, 84);
+  font-family: "Changa One", sans-serif;
+  font-weight: 400;
+  font-size: 20px;
   transition: color 0.3s;
   text-decoration: none;
 }
