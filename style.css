@@ -19,13 +19,15 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.logo-text a {
-  color: #16a34a;
-  font-size: 22px;
-  font-weight: bold;
-  text-decoration: none;
+.logo-text img {
+  transition: transform 0.3s ease;
+  height: 48px;
+  width: 170px;
 }
 
+.logo-text img:hover {
+  transform: scale(1.1);
+}
 .nav-bar-buttons {
   display: flex;
   gap: 30px;
@@ -77,16 +79,17 @@
 }
 .mini-intro {
   display: flex;
-  justify-content: center;
   flex-direction: column;
   text-align: center;
-  background: radial-gradient(circle, #dffaef, rgb(239, 239, 239));
-  height: 500px;
+  background: url("media/background_image.jpg");
+  background-size: cover;
+  height: 1000px;
   width: 100%;
   color: black;
   padding: 100px;
 }
 .line-1 {
+  top: 100px;
   color: #166534;
 }
 .line-2 {
@@ -138,8 +141,8 @@
   gap: 10px;
 }
 .mini-page-tags a {
-  background-color: rgba(250, 255, 251, 0.687);
-  color: grey;
+  
+  color: white;
   font-size: small;
   margin: 20px;
   padding: 2px;
