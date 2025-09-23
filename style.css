@@ -49,14 +49,19 @@
   position: relative;
   gap: 10px;
 }
-
+.mini-intro-buttons {
+  position: absolute;
+  top: 480px;
+  left: 100px;
+}
 .sign-in,
 .get-started {
-  padding: 6px 12px;
+  padding: 12px 24px;
   border-radius: 8px;
   font-weight: bold;
   transition: transform 0.3s ease;
   text-align: center;
+  font-size: 16px;
 }
 .sign-in {
   color: #16a34a;
@@ -66,8 +71,8 @@
 
 .get-started {
   color: white;
-  background-color: #16a34a;
-  border: 1px solid #16a34a;
+  background-color: #166534cf;
+  border: 1px solid #13562dcf;
 }
 
 .sign-in:hover,
@@ -93,7 +98,7 @@
   position: absolute;
   font-family: "Bricolage Grotesque", sans-serif;
   font-weight: 550;
-  top: 110px;
+  top: 120px;
   left: 25px;
   font-size: 20px;
   color: rgb(52, 52, 52);
@@ -170,7 +175,6 @@
   gap: 10px;
 }
 .mini-page-tags a {
-  
   color: white;
   font-size: small;
   margin: 20px;
@@ -180,4 +184,26 @@
 .mini-page-tags a i {
   margin: 5px;
   color: #16a34a;
+}
+.watch-video i {
+  position: absolute;
+  left: 243px;
+  top: 8px;
+  border-radius: 50%;
+  font-size: 30px;
+  border: #166534;
+  color: #20a754;
+}
+.watch-video-background {
+  position: absolute;
+  background-color: white;
+  height: 45px;
+  width: 45px;
+  left: 230px;
+  top: 0px;
+  border: white;
+  border-radius: 50%;
+}
+.watch-video-text {
+  
 }
