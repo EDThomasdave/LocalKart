@@ -10,7 +10,6 @@
     }
 .navbar {
       background-color: transparent !important;
-      box-shadow: none;
       font-family: "Changa One", sans-serif;
       font-size: 20px;
     }
@@ -52,7 +51,6 @@
       margin-top: 20px;
       margin-left: -20px;
     }
-
 .btn-get-started {
       background-color: #166534cf;
       color: white;
@@ -82,3 +80,11 @@
 .btn-signin:hover {
       transform: scale(1.05);
     }
+.mt-4 .btn {
+  border-radius: 50%;
+  font-size: 20px;
+  color: green;
+  margin-left: 60px;
+  scale: 1.3;
+  
+}
