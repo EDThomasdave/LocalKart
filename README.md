@@ -1,1 +1,1 @@
-! [image alt](https://github.com/EDThomasdave/LocalKart/blob/362cc8419b89a2b37268aa6f12e8f03e9652ebe7/github_first_page.png)
+! [image alt](https://github.com/EDThomasdave/LocalKart/blob/4ed65b34699a73d98d0ff2a88ecc86071882bfa2/github_first_page.jpg)
