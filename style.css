@@ -108,3 +108,78 @@
   background-color: #f8f9fa;
   font-family: "Bricolage Grotesque", sans-serif;
 }
+.footer {
+  background-color: black;
+  position: relative;
+  color: white;
+}
+.about-localkart {
+  background-color: #f8f9fa;
+  padding: 80px 20px;
+  text-align: center;
+  font-family: "Bricolage Grotesque", sans-serif;
+  color: rgb(33, 33, 33);
+  border-top: 2px solid #1665342c;
+}
+
+.about-localkart h2 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #166534;
+  margin-bottom: 20px;
+}
+
+.about-localkart p {
+  max-width: 850px;
+  margin: 10px auto;
+  line-height: 1.7;
+  font-size: 18px;
+  color: rgb(52, 52, 52);
+}
+
+.about-highlights {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-top: 50px;
+}
+
+.highlight-card {
+  background-color: white;
+  padding: 25px;
+  width: 270px;
+  border-radius: 14px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: 0.3s ease;
+  border: 1px solid #f0f0f0;
+}
+
+.highlight-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 16px rgba(22, 101, 52, 0.15);
+}
+.highlight-card i {
+  font-size: 2rem;
+  color: #166534;
+  margin-bottom: 10px;
+}
+
+.highlight-card h4 {
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #166534;
+}
+
+.highlight-card p {
+  font-size: 16px;
+  color: #333;
+}
+.about-localkart {
+  animation: fadeIn 1s ease-in-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
