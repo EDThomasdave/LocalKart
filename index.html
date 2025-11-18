@@ -32,7 +32,13 @@
       
       <div class="collapse navbar-collapse" id="navbarContent">
         <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-5">
-          <li class="nav-item"><a class="nav-link" href="#">How it Works</a></li>
+          <li class="nav-item">
+  <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#howItWorksModal" id="howItWorksBtn">
+    How it Works
+  </a>
+</li>
+
+
           <li class="nav-item"><a class="nav-link" href="files/for_stores.html">For Stores</a></li>
           <li class="nav-item"><a class="nav-link" href="files/locations.html">Locations</a></li>
           <li class="nav-item"><a class="nav-link" href="files/support.html">Support</a></li>
@@ -59,9 +65,21 @@
         for pickup. Supporting local businesses made easy.
       </p>
       <div class="mt-4">
-        <button class="btn-get-started">Get Started</button>
-        <button type="button" class="btn btn-light" id="watch-now"><i class="fa-solid fa-play"></i></button>
-        <label for="watch-now" class="watch-now" id="watch">Watch Now</label>
+        <a href="files/register.html">
+          <button class="btn-get-started">Get Started</button>
+        </a>
+        <button type="button" class="btn btn-light" id="watch-now"
+        data-bs-toggle="modal" data-bs-target="#watchNowModal">
+  <i class="fa-solid fa-play"></i>
+</button>
+
+<label class="watch-now" id="watch"
+       style="cursor:pointer"
+       data-bs-toggle="modal" data-bs-target="#watchNowModal">
+  Watch Now
+</label>
+
+        <label for="watch-now" class="watch-now" id="watch"></label>
       </div>
     </div>
   </section>
@@ -100,7 +118,56 @@
     </div>
   </div>
 </section>
+<!-- How It Works Video Modal -->
+<div class="modal fade" id="howItWorksModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content" style="background: #000; border: none;">
+      <video id="howItWorksVideo" width="100%" controls>
+        <source src="media/LocalKart_Explain_1.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+</div>
+<!-- Watch Now Video Modal -->
+<div class="modal fade" id="watchNowModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content" style="background: #000; border: none;">
+      <video id="watchNowVideo" width="100%" controls>
+        <source src="media/LocalKart_Watch_Now.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+</div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+  const howItWorksModal = document.getElementById('howItWorksModal');
+  const howItWorksVideo = document.getElementById('howItWorksVideo');
+
+  howItWorksModal.addEventListener('shown.bs.modal', () => {
+    howItWorksVideo.play();
+  });
+
+  howItWorksModal.addEventListener('hidden.bs.modal', () => {
+    howItWorksVideo.pause();
+    howItWorksVideo.currentTime = 0;
+  });
+</script>
+<script>
+  const watchNowModal = document.getElementById('watchNowModal');
+  const watchNowVideo = document.getElementById('watchNowVideo');
+
+  watchNowModal.addEventListener('shown.bs.modal', () => {
+    watchNowVideo.play();
+  });
+
+  watchNowModal.addEventListener('hidden.bs.modal', () => {
+    watchNowVideo.pause();
+    watchNowVideo.currentTime = 0;
+  });
+</script>
+
+
 </body>
   <footer class="footer">
   <div class="container footer-container">
