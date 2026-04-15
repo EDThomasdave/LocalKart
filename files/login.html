@@ -109,7 +109,7 @@
         <input type="password" id="loginPassword" class="form-control" placeholder="Enter password" required>
       </div>
 
-      <button class="btn-login mt-2" id="loginBtn">Login</button>
+      <button class="btn-login mt-2" onclick="loginUser()" id="loginBtn">Login</button>
     </form>
 
     <div class="text-center mt-4">
@@ -127,20 +127,37 @@
     © 2024 LocalKart — All Rights Reserved.
   </footer>
 
-  <script>
-    const loginForm = document.getElementById('loginForm');
-    const loginBtn = document.getElementById('loginBtn');
+<script>
+async function loginUser() {
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
 
-    loginForm.addEventListener('submit', (e)=>{
-      e.preventDefault();
-      loginBtn.textContent = 'Checking...';
+  const res = await fetch("http://localhost:5000/api/auth/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email, password })
+  });
 
-      setTimeout(()=>{
-        loginBtn.textContent = 'Login';
-        alert('Login successful (simulation).');
-      },900);
-    });
-  </script>
+  const data = await res.json();
+
+  console.log(data);
+
+  // ❌ If login failed
+  if (!res.ok) {
+    alert(data.msg || "Login failed");
+    return;
+  }
+
+  // ✅ If success
+  localStorage.setItem("token", data.token);
+  alert("Login successful!");
+
+  window.location.href = "dashboard.html";
+}
+</script>
+
 
 </body>
 </html>

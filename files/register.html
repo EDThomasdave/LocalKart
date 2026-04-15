@@ -145,7 +145,7 @@
       </div>
 
       <div class="mt-4">
-        <button id="createBtn" class="btn-create" disabled>Create Account</button>
+        <button id="createBtn" class="btn-create" onclick="registerUser()">Create Account</button>
       </div>
     </form>
 
@@ -165,58 +165,32 @@
     © 2024 LocalKart — All Rights Reserved.
   </footer>
 
-  <script>
-    // Elements
-    const passwordInput = document.getElementById('passwordInput');
-    const confirmPassword = document.getElementById('confirmPassword');
-    const checkLetters = document.getElementById('checkLetters');
-    const checkNumbers = document.getElementById('checkNumbers');
-    const checkCaps = document.getElementById('checkCaps');
-    const confirmMsg = document.getElementById('confirmMsg');
-    const createBtn = document.getElementById('createBtn');
+<script>
+async function registerUser() {
+  const name = document.getElementById("fullName").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("passwordInput").value;
 
-    // use explicit color fallback for JS (avoid using CSS var in JS string)
-    const okColor = getComputedStyle(document.documentElement).getPropertyValue('--green') || '#166534';
-    const badColor = '#c0392b';
+  const res = await fetch("http://localhost:5000/api/auth/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ name, email, password })
+  });
 
-    function updateChecks() {
-      const val = passwordInput.value || '';
-      const hasLetters = /[a-zA-Z]/.test(val);
-      const hasNumbers = /\d/.test(val);
-      const hasCaps = /[A-Z]/.test(val);
+  const data = await res.json();
 
-      checkLetters.style.color = hasLetters ? okColor.trim() : badColor;
-      checkNumbers.style.color = hasNumbers ? okColor.trim() : badColor;
-      checkCaps.style.color = hasCaps ? okColor.trim() : badColor;
+  console.log(data);
 
-      // enable create button only when all conditions met and passwords match
-      const allGood = hasLetters && hasNumbers && hasCaps && (passwordInput.value === confirmPassword.value) && passwordInput.value.length >= 8;
-      createBtn.disabled = !allGood;
-    }
+  if (!res.ok) {
+    alert(data.msg);
+    return;
+  }
 
-    passwordInput.addEventListener('input', () => {
-      updateChecks();
-      confirmMsg.textContent = (confirmPassword.value && passwordInput.value !== confirmPassword.value) ? 'Passwords do not match' : '';
-    });
-
-    confirmPassword.addEventListener('input', () => {
-      confirmMsg.textContent = (passwordInput.value !== confirmPassword.value) ? 'Passwords do not match' : '';
-      updateChecks();
-    });
-
-    // simple submit handler (placeholder)
-    document.getElementById('regForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (createBtn.disabled) return;
-      // simulate success
-      createBtn.textContent = 'Creating...';
-      setTimeout(()=>{
-        createBtn.textContent = 'Create Account';
-        alert('Account created (simulation).');
-        document.getElementById('regForm').reset();
-        updateChecks();
-      },900);
-    });
-  </script>
+  alert("Registration successful!");
+  window.location.href = "login.html";
+}
+</script>
 </body>
 </html>
