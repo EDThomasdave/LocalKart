@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocalKart - Exact Replica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #a5b39c; } /* Exact Sage Green */
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="m-0 p-0 overflow-hidden">
+
+    <header class="bg-[#f0f2f1] px-8 py-2 flex items-center justify-between border-b border-gray-200">
+        <div class="flex items-center gap-10">
+            <div class="flex items-center gap-1">
+                <div class="bg-[#24963f] text-white rounded-full w-9 h-9 flex items-center justify-center font-bold text-xl">L</div>
+                <span class="text-2xl font-extrabold text-[#111] tracking-tighter">LocalKart</span>
+            </div>
+
+            <div class="flex flex-col">
+                <span class="text-[13px] font-extrabold text-black leading-tight">Delivery in 16 minutes</span>
+                <span class="text-[11px] text-gray-500 flex items-center">
+                    M7J4+93B, Shivaji University Kol.. <i class="fas fa-caret-down ml-1"></i>
+                </span>
+            </div>
+        </div>
+
+        <div class="flex-1 max-w-xl mx-10">
+            <div class="relative">
+                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                <input type="text" placeholder='Search "rice"' class="w-full bg-white border border-gray-200 rounded-lg py-2 pl-10 pr-4 text-[13px] outline-none">
+            </div>
+        </div>
+
+        <div class="flex items-center gap-6">
+            <button class="text-[14px] font-semibold text-gray-600">Login</button>
+            <button class="bg-white border border-gray-200 px-4 py-2 rounded-lg flex items-center gap-2 text-[13px] font-bold text-gray-700 shadow-sm">
+                <i class="fas fa-shopping-cart text-[#24963f]"></i> My Cart
+            </button>
+        </div>
+    </header>
+
+    <main class="flex h-[calc(100vh-110px)] mx-8 mt-3 bg-white rounded-t-xl overflow-hidden border border-gray-200 shadow-xl">
+        
+        <aside class="w-20 border-r border-gray-100 flex flex-col items-center bg-white shrink-0 overflow-y-auto custom-scroll">
+            <div class="w-full flex items-center">
+                <div class="w-1 bg-[#24963f] h-12 rounded-r-full"></div>
+                <div class="flex-1 flex flex-col items-center py-4 bg-[#f4fdf6]">
+                    <img src="https://cdn-icons-png.flaticon.com/128/372/372971.png" class="w-7 h-7" alt="">
+                    <span class="text-[9px] font-bold text-gray-900 mt-2 uppercase">Milk</span>
+                </div>
+            </div>
+            <div class="flex flex-col items-center py-5 border-b border-gray-50 opacity-60 w-full hover:opacity-100 cursor-pointer">
+                <img src="https://cdn-icons-png.flaticon.com/128/3014/3014535.png" class="w-7 h-7" alt="">
+                <span class="text-[9px] font-semibold text-center mt-2 leading-none">Bread & <br> Pav</span>
+            </div>
+            <div class="flex flex-col items-center py-5 border-b border-gray-50 opacity-60 w-full hover:opacity-100 cursor-pointer">
+                <img src="https://cdn-icons-png.flaticon.com/128/837/837160.png" class="w-7 h-7" alt="">
+                <span class="text-[9px] font-semibold text-center mt-2 uppercase">Eggs</span>
+            </div>
+            <div class="flex flex-col items-center py-5 border-b border-gray-50 opacity-60 w-full hover:opacity-100 cursor-pointer">
+                <img src="https://cdn-icons-png.flaticon.com/128/2913/2913959.png" class="w-7 h-7" alt="">
+                <span class="text-[9px] font-semibold text-center mt-2">Kellogg's <br> & Cereals</span>
+            </div>
+            <div class="flex flex-col items-center py-5 border-b border-gray-50 opacity-60 w-full hover:opacity-100 cursor-pointer">
+                <img src="https://cdn-icons-png.flaticon.com/128/3014/3014488.png" class="w-7 h-7" alt="">
+                <span class="text-[9px] font-semibold text-center mt-2">Muesli & <br> Granola</span>
+            </div>
+        </aside>
+
+        <section class="flex-1 p-5 overflow-y-auto custom-scroll bg-white">
+            <h2 class="text-[15px] font-extrabold text-gray-800 mb-5">Buy Milk Online</h2>
+
+            <div class="grid grid-cols-6 gap-3">
+                
+                <div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md transition-shadow relative">
+                    <div class="h-28 flex items-center justify-center mb-2"><img src="https://www.gokulmilk.com/images/products/milk/full-cream-milk.png" class="max-h-full"></div>
+                    <div class="flex items-center text-[9px] font-bold text-orange-400 mb-1 uppercase tracking-tighter"><i class="far fa-clock mr-1"></i> 16 MINS</div>
+                    <h3 class="text-[12px] font-bold text-gray-800 leading-tight h-8">Gokul Full Cream Milk</h3>
+                    <p class="text-[11px] text-gray-400 mt-1">500 ml</p>
+                    <div class="flex items-center justify-between mt-4">
+                        <span class="text-sm font-bold">₹35</span>
+                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg hover:bg-green-700 transition">ADD</button>
+                    </div>
+                </div>
+
+                <div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md transition-shadow">
+                    <div class="h-28 flex items-center justify-center mb-2"><img src="https://www.amul.com/files/products/amul-buffalo-milk-500ml-front.png" class="max-h-full"></div>
+                    <div class="flex items-center text-[9px] font-bold text-orange-400 mb-1 uppercase tracking-tighter"><i class="far fa-clock mr-1"></i> 16 MINS</div>
+                    <h3 class="text-[12px] font-bold text-gray-800 leading-tight h-8">Amul Buffalo A2 Milk</h3>
+                    <p class="text-[11px] text-gray-400 mt-1">500 ml</p>
+                    <div class="flex items-center justify-between mt-4">
+                        <span class="text-sm font-bold">₹35</span>
+                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                    </div>
+                </div>
+
+                <div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md transition-shadow">
+                    <div class="h-28 flex items-center justify-center mb-2"><img src="https://www.amul.com/files/products/Amul-Taaza-200ml-Front.png" class="max-h-full"></div>
+                    <div class="flex items-center text-[9px] font-bold text-orange-400 mb-1 uppercase tracking-tighter"><i class="far fa-clock mr-1"></i> 16 MINS</div>
+                    <h3 class="text-[12px] font-bold text-gray-800 leading-tight h-8">Amul Taaza Toned Milk</h3>
+                    <p class="text-[11px] text-gray-400 mt-1">200 ml</p>
+                    <div class="flex items-center justify-between mt-4">
+                        <span class="text-sm font-bold">₹17</span>
+                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                    </div>
+                </div>
+
+                <div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md transition-shadow">
+                    <div class="h-28 flex items-center justify-center mb-2"><img src="https://www.amul.com/files/products/moti-front-new.jpg" class="max-h-full"></div>
+                    <div class="flex items-center text-[9px] font-bold text-orange-400 mb-1 uppercase tracking-tighter"><i class="far fa-clock mr-1"></i> 16 MINS</div>
+                    <h3 class="text-[12px] font-bold text-gray-800 leading-tight h-8">Amul Moti Toned Milk (90 Days Shelf Life)</h3>
+                    <p class="text-[11px] text-gray-400 mt-1">450 ml</p>
+                    <div class="flex items-center justify-between mt-4">
+                        <span class="text-sm font-bold">₹33</span>
+                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                    </div>
+                </div>
+
+                <div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md transition-shadow">
+                    <div class="h-28 flex items-center justify-center mb-2"><img src="https://www.amul.com/files/products/taaza-1l-front.jpg" class="max-h-full"></div>
+                    <div class="flex items-center text-[9px] font-bold text-orange-400 mb-1 uppercase tracking-tighter"><i class="far fa-clock mr-1"></i> 16 MINS</div>
+                    <h3 class="text-[12px] font-bold text-gray-800 leading-tight h-8">Amul Taaza Homogenised Toned...</h3>
+                    <p class="text-[11px] text-gray-400 mt-1">1 ltr</p>
+                    <div class="flex items-center justify-between mt-4">
+                        <span class="text-sm font-bold">₹77</span>
+                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                    </div>
+                </div>
+
+                <div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md transition-shadow">
+                    <div class="h-28 flex items-center justify-center mb-2"><img src="https://www.amul.com/files/products/lactose-free-milk-250ml.png" class="max-h-full"></div>
+                    <div class="flex items-center text-[9px] font-bold text-orange-400 mb-1 uppercase tracking-tighter"><i class="far fa-clock mr-1"></i> 16 MINS</div>
+                    <h3 class="text-[12px] font-bold text-gray-800 leading-tight h-8">Amul Lactose Free Milk</h3>
+                    <p class="text-[11px] text-gray-400 mt-1">250 ml</p>
+                    <div class="flex items-center justify-between mt-4">
+                        <span class="text-sm font-bold">₹26</span>
+                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                    </div>
+                </div>
+
+                <div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md transition-shadow">
+                    <div class="h-28 flex items-center justify-center mb-2"><img src="https://www.amul.com/files/products/slim-trim-milk-pack-front.jpg" class="max-h-full"></div>
+                    <div class="flex items-center text-[9px] font-bold text-orange-400 mb-1 uppercase tracking-tighter"><i class="far fa-clock mr-1"></i> 16 MINS</div>
+                    <h3 class="text-[12px] font-bold text-gray-800 leading-tight h-8">Amul Slim 'n' Trim</h3>
+                    <p class="text-[11px] text-gray-400 mt-1">500 ml</p>
+                    <div class="flex items-center justify-between mt-4">
+                        <span class="text-sm font-bold">₹30</span>
+                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                    </div>
+                </div>
+
+                <div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md transition-shadow">
+                    <div class="h-28 flex items-center justify-center mb-2"><img src="https://www.amul.com/files/products/Amul-Gold-500ml-Front.png" class="max-h-full"></div>
+                    <div class="flex items-center text-[9px] font-bold text-orange-400 mb-1 uppercase tracking-tighter"><i class="far fa-clock mr-1"></i> 16 MINS</div>
+                    <h3 class="text-[12px] font-bold text-gray-800 leading-tight h-8">Amul Gold Milk</h3>
+                    <p class="text-[11px] text-gray-400 mt-1">500 ml</p>
+                    <div class="flex items-center justify-between mt-4">
+                        <span class="text-sm font-bold">₹33</span>
+                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                    </div>
+                </div>
+
+                <div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md transition-shadow relative">
+                    <span class="absolute top-0 left-0 bg-green-600 text-white text-[9px] font-bold px-2 py-1 rounded-tl-xl rounded-br-xl">10% OFF</span>
+                    <div class="h-28 flex items-center justify-center mb-2"><img src="https://m.media-amazon.com/images/I/61U8-m9hD2L._SX679_.jpg" class="max-h-full"></div>
+                    <div class="flex items-center text-[9px] font-bold text-orange-400 mb-1 uppercase tracking-tighter"><i class="far fa-clock mr-1"></i> 16 MINS</div>
+                    <h3 class="text-[12px] font-bold text-gray-800 leading-tight h-8">Nestle a+ Slim</h3>
+                    <p class="text-[11px] text-gray-400 mt-1">1 ltr</p>
+                    <div class="flex items-center justify-between mt-4">
+                        <span class="text-sm font-bold">₹85</span>
+                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                    </div>
+                </div>
+
+                <div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md transition-shadow">
+                    <div class="h-28 flex items-center justify-center mb-2"><img src="https://www.amul.com/files/products/amul-cow-milk-500ml-front.png" class="max-h-full"></div>
+                    <div class="flex items-center text-[9px] font-bold text-orange-400 mb-1 uppercase tracking-tighter"><i class="far fa-clock mr-1"></i> 16 MINS</div>
+                    <h3 class="text-[12px] font-bold text-gray-800 leading-tight h-8">Amul Cow Milk</h3>
+                    <p class="text-[11px] text-gray-400 mt-1">500 ml</p>
+                    <div class="flex items-center justify-between mt-4">
+                        <span class="text-sm font-bold">₹28</span>
+                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                    </div>
+                </div>
+
+                <div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md transition-shadow">
+                    <div class="h-28 flex items-center justify-center mb-2"><img src="https://www.amul.com/files/products/amul-buffalo-milk-500ml-front.png" class="max-h-full"></div>
+                    <div class="flex items-center text-[9px] font-bold text-orange-400 mb-1 uppercase tracking-tighter"><i class="far fa-clock mr-1"></i> 16 MINS</div>
+                    <h3 class="text-[12px] font-bold text-gray-800 leading-tight h-8">Amul Buffalo A2 Milk</h3>
+                    <p class="text-[11px] text-gray-400 mt-1">1 ltr</p>
+                    <div class="flex items-center justify-between mt-4">
+                        <span class="text-sm font-bold">₹70</span>
+                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                    </div>
+                </div>
+
+                <div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md transition-shadow">
+                    <div class="h-28 flex items-center justify-center mb-2"><img src="https://www.amul.com/files/products/calci-plus-1l-front.jpg" class="max-h-full"></div>
+                    <div class="flex items-center text-[9px] font-bold text-orange-400 mb-1 uppercase tracking-tighter"><i class="far fa-clock mr-1"></i> 16 MINS</div>
+                    <h3 class="text-[12px] font-bold text-gray-800 leading-tight h-8">Amul Calci+ Milk</h3>
+                    <p class="text-[11px] text-gray-400 mt-1">1 ltr</p>
+                    <div class="flex items-center justify-between mt-4">
+                        <span class="text-sm font-bold">₹80</span>
+                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <div class="fixed bottom-0 left-0 right-0 bg-[#24963f] flex items-center justify-end px-8 py-2.5 h-12 shadow-2xl">
+        <div class="flex items-center gap-1 cursor-pointer group">
+            <span class="text-white text-[14px] font-extrabold group-hover:underline">View Cart</span>
+            <i class="fas fa-chevron-right text-white text-[10px] mt-1"></i>
+        </div>
+    </div>
+
+</body>
+</html>
