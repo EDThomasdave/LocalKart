@@ -23,12 +23,20 @@
                 <span class="text-2xl font-extrabold text-[#111] tracking-tighter">LocalKart</span>
             </div>
 
-            <div class="flex flex-col">
-                <span class="text-[13px] font-extrabold text-black leading-tight">Delivery in 16 minutes</span>
-                <span class="text-[11px] text-gray-500 flex items-center">
-                    M7J4+93B, Shivaji University Kol.. <i class="fas fa-caret-down ml-1"></i>
-                </span>
-            </div>
+            <div class="flex flex-col leading-tight">
+    
+    <!-- Optional label -->
+    <span class="text-[11px] text-gray-400 font-semibold">
+        Your Location
+    </span>
+
+    <!-- Single line truncated location -->
+    <span id="userLocation"
+        class="text-[14px] font-bold text-black max-w-[220px] truncate">
+        Detecting location...
+    </span>
+
+</div>
         </div>
 
         <div class="flex-1 max-w-xl mx-10">
@@ -39,9 +47,9 @@
         </div>
 
         <div class="flex items-center gap-6">
-            <button class="text-[14px] font-semibold text-gray-600">Login</button>
+            <button href="./login.html" class="text-[14px] font-semibold text-gray-600" id="loginBtn">Login</button>
             <button class="bg-white border border-gray-200 px-4 py-2 rounded-lg flex items-center gap-2 text-[13px] font-bold text-gray-700 shadow-sm">
-                <i class="fas fa-shopping-cart text-[#24963f]"></i> My Cart
+                <i class="fas fa-shopping-cart text-[#24963f]"></i> My Cart (<span id="cartCount">0</span>)
             </button>
         </div>
     </header>
@@ -97,7 +105,9 @@
                     <div class="distance text-[10px] font-bold mb-1" data-distance="2"></div>
                     <div class="flex items-center justify-between mt-4">
                         <span class="text-sm font-bold">₹35</span>
-                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg hover:bg-green-700 transition">ADD</button>
+                        <div id="cart-69e3e04ce6a075a759e3efc1" class="inline-block">
+                        <button onclick="addToCart('69e3e04ce6a075a759e3efc1')" class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg hover:bg-green-700 transition">ADD</button>
+                        </div>
                     </div>
                 </div>
 
@@ -109,7 +119,9 @@
                     <p class="text-[11px] text-gray-400 mt-1">500 ml</p>
                     <div class="flex items-center justify-between mt-4">
                         <span class="text-sm font-bold">₹35</span>
-                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                        <div id="cart-69e3e04ce6a075a759e3efc2" class="inline-block">
+                        <button onclick="addToCart('69e3e04ce6a075a759e3efc2')" class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                    </div>
                     </div>
                 </div>
 
@@ -121,7 +133,9 @@
                     <div class="distance text-[10px] font-bold mb-1" data-distance="2"></div>
                     <div class="flex items-center justify-between mt-4">
                         <span class="text-sm font-bold">₹17</span>
-                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                        <div id="cart-69e3e04ce6a075a759e3efc3" class="inline-block">
+                        <button onclick="addToCart('69e3e04ce6a075a759e3efc3')" class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                        </div>
                     </div>
                 </div>
 
@@ -132,7 +146,9 @@
                     <p class="text-[11px] text-gray-400 mt-1">450 ml</p><div class="distance text-[10px] font-bold mb-1" data-distance="2"></div>
                     <div class="flex items-center justify-between mt-4">
                         <span class="text-sm font-bold">₹33</span>
-                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                        <div id="cart-69e3e04ce6a075a759e3efc4" class="inline-block">
+                        <button onclick="addToCart('69e3e04ce6a075a759e3efc4')" class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                        </div>
                     </div>
                 </div>
 
@@ -144,7 +160,9 @@
                     <div class="distance text-[10px] font-bold mb-1" data-distance="2"></div>
                     <div class="flex items-center justify-between mt-4">
                         <span class="text-sm font-bold">₹77</span>
-                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                        <div id="cart-69e3e04ce6a075a759e3efc5" class="inline-block">
+                        <button onclick="addToCart('69e3e04ce6a075a759e3efc5')" class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                        </div>
                     </div>
                 </div>
 
@@ -156,7 +174,9 @@
                     <div class="distance text-[10px] font-bold mb-1" data-distance="2"></div>
                     <div class="flex items-center justify-between mt-4">
                         <span class="text-sm font-bold">₹26</span>
-                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                        <div id="cart-69e3e04ce6a075a759e3efc6" class="inline-block">
+                        <button onclick="addToCart('69e3e04ce6a075a759e3efc6')" class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                        </div>
                     </div>
                 </div>
 
@@ -169,7 +189,9 @@
 
                     <div class="flex items-center justify-between mt-4">
                         <span class="text-sm font-bold">₹30</span>
-                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                        <div id="cart-69e3e04ce6a075a759e3efc7" class="inline-block">
+                        <button onclick="addToCart('69e3e04ce6a075a759e3efc7')" class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                        </div>
                     </div>
                 </div>
 
@@ -181,7 +203,9 @@
                         <div class="distance text-[10px] font-bold mb-1" data-distance="2"></div>
                     <div class="flex items-center justify-between mt-4">
                         <span class="text-sm font-bold">₹33</span>
-                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                        <div id="cart-69e3e04ce6a075a759e3efc8" class="inline-block">
+                        <button onclick="addToCart('69e3e04ce6a075a759e3efc8')" class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                        </div>
                     </div>
                 </div>
 
@@ -194,7 +218,9 @@
                         <div class="distance text-[10px] font-bold mb-1" data-distance="2"></div>
                     <div class="flex items-center justify-between mt-4">
                         <span class="text-sm font-bold">₹85</span>
-                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                        <div id="cart-69e3e04ce6a075a759e3efc9" class="inline-block">
+                        <button onclick="addToCart('69e3e04ce6a075a759e3efc9')" class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                        </div>
                     </div>
                 </div>
 
@@ -206,7 +232,9 @@
                         <div class="distance text-[10px] font-bold mb-1" data-distance="2"></div>
                     <div class="flex items-center justify-between mt-4">
                         <span class="text-sm font-bold">₹28</span>
-                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                        <div id="cart-69e3e04ce6a075a759e3efca" class="inline-block">
+                        <button onclick="addToCart('69e3e04ce6a075a759e3efca')" class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                        </div>
                     </div>
                 </div>
 
@@ -218,7 +246,9 @@
                         <div class="distance text-[10px] font-bold mb-1" data-distance="4"></div>
                     <div class="flex items-center justify-between mt-4">
                         <span class="text-sm font-bold">₹70</span>
-                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                        <div id="cart-69e3e04ce6a075a759e3efcb" class="inline-block">
+                        <button onclick="addToCart('69e3e04ce6a075a759e3efcb')" class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                        </div>
                     </div>
                 </div>
 
@@ -230,7 +260,9 @@
                         <div class="distance text-[10px] font-bold mb-1" data-distance="97"></div>
                     <div class="flex items-center justify-between mt-4">
                         <span class="text-sm font-bold">₹80</span>
-                        <button class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                        <div id="cart-69e3e04ce6a075a759e3efcc" class="inline-block">
+                        <button onclick="addToCart('69e3e04ce6a075a759e3efcc')" class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+                        </div>
                     </div>
                 </div>
 
@@ -245,6 +277,109 @@
         </div>
     </div>
     <script>
+        // 🔐 USER
+const user = JSON.parse(localStorage.getItem("user"));
+const USER_ID = user?.id;
+
+if (!USER_ID) {
+    alert("Please login first");
+    window.location.href = "login.html";
+}
+const loginBtn = document.getElementById("loginBtn");
+
+if (user) {
+    loginBtn.innerText = "Logout";
+    loginBtn.onclick = () => {
+        localStorage.clear();
+        window.location.href = "login.html";
+    };
+}
+// 🛒 ADD TO CART
+async function addToCart(productId) {
+
+    await fetch("http://localhost:5000/api/cart/add", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            userId: USER_ID,
+            productId: productId
+        })
+    });
+
+    renderQuantityControls(productId, 1);
+    updateCartCount();
+}
+function renderQuantityControls(productId, qty) {
+    const container = document.getElementById(`cart-${productId}`);
+
+    container.innerHTML = `
+        <div class="flex items-center gap-2 bg-[#8cc63f] text-white px-2 py-1 rounded-lg">
+            <button onclick="decreaseQty('${productId}', ${qty})" class="font-bold">-</button>
+            <span class="font-bold">${qty}</span>
+            <button onclick="increaseQty('${productId}', ${qty})" class="font-bold">+</button>
+        </div>
+    `;
+}
+async function increaseQty(productId, qty) {
+    qty++;
+
+    await fetch("http://localhost:5000/api/cart/add", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            userId: USER_ID,
+            productId: productId
+        })
+    });
+
+    renderQuantityControls(productId, qty);
+    updateCartCount();
+}
+async function decreaseQty(productId, qty) {
+    qty--;
+
+    await fetch("http://localhost:5000/api/cart/decrease", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            userId: USER_ID,
+            productId: productId
+        })
+    });
+
+    if (qty <= 0) {
+        const container = document.getElementById(`cart-${productId}`);
+        container.innerHTML = `
+    <button onclick="addToCart('${productId}')" 
+    class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg hover:bg-green-700 transition">
+    ADD
+    </button>
+`;
+    } else {
+        renderQuantityControls(productId, qty);
+    }
+
+    updateCartCount();
+}
+async function updateCartCount() {
+    const res = await fetch(`http://localhost:5000/api/cart/${USER_ID}`);
+    const cart = await res.json();
+
+    let total = 0;
+    if (cart.items) {
+        cart.items.forEach(item => total += item.quantity);
+    }
+
+    document.getElementById("cartCount").innerText = total;
+}
+
+updateCartCount();
     document.querySelectorAll(".distance").forEach(el => {
         let d = parseFloat(el.getAttribute("data-distance"));
 
@@ -260,6 +395,32 @@
             el.classList.add("text-red-500");
         }
     });
+    // 🚀 LOAD PRODUCTS DYNAMICALLY
+
+// 📍 GET USER LOCATION
+navigator.geolocation.getCurrentPosition(async (pos) => {
+    const lat = pos.coords.latitude;
+    const lng = pos.coords.longitude;
+
+    try {
+        // 🌍 Reverse geocoding (OpenStreetMap - FREE)
+        const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+        );
+
+        const data = await res.json();
+
+        const locationText = data.address.suburb || data.address.city || data.display_name;
+
+        document.getElementById("userLocation").innerText = locationText;
+
+    } catch (err) {
+        document.getElementById("userLocation").innerText = "Location unavailable";
+    }
+
+}, () => {
+    document.getElementById("userLocation").innerText = "Location denied";
+});
 </script>
 </body>
 </html>

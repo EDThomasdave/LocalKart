@@ -150,8 +150,10 @@ async function loginUser() {
     return;
   }
 
-  // ✅ If success
+  // ✅ FIX HERE 🔥
   localStorage.setItem("token", data.token);
+  localStorage.setItem("user", JSON.stringify(data.user)); // 👈 ADD THIS
+
   alert("Login successful!");
 
   window.location.href = "dashboard.html";
