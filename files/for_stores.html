@@ -227,7 +227,7 @@ async function registerStore(e) {
     const lat = pos.coords.latitude;
     const lng = pos.coords.longitude;
 
-    const res = await fetch("http://localhost:5000/api/store/register", {
+    const res = await fetch("https://localkart-backend-hbou.onrender.com/api/store/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

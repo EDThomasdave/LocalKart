@@ -214,7 +214,7 @@ if (user) {
 }
 
 async function addToCart(productId) {
-    await fetch("http://localhost:5000/api/cart/add", {
+    await fetch("https://localkart-backend-hbou.onrender.com/api/cart/add", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ userId: USER_ID, productId })
@@ -239,7 +239,7 @@ function renderQuantityControls(productId, qty) {
 async function increaseQty(productId, qty) {
     qty++;
 
-    await fetch("http://localhost:5000/api/cart/add", {
+    await fetch("https://localkart-backend-hbou.onrender.com/api/cart/add", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ userId: USER_ID, productId })
@@ -252,7 +252,7 @@ async function increaseQty(productId, qty) {
 async function decreaseQty(productId, qty) {
     qty--;
 
-    await fetch("http://localhost:5000/api/cart/decrease", {
+    await fetch("https://localkart-backend-hbou.onrender.com/api/cart/decrease", {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ userId: USER_ID, productId })
@@ -275,7 +275,7 @@ async function decreaseQty(productId, qty) {
 }
 
 async function updateCartCount() {
-    const res = await fetch(`http://localhost:5000/api/cart/${USER_ID}`);
+    const res = await fetch(`https://localkart-backend-hbou.onrender.com/api/cart/${USER_ID}`);
     const cart = await res.json();
 
     let total = 0;
