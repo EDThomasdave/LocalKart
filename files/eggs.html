@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocalKart - Exact Replica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #a5b39c; }
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="m-0 p-0 overflow-hidden">
+
+<header class="bg-[#f0f2f1] px-8 py-2 flex items-center justify-between border-b border-gray-200">
+    <div class="flex items-center gap-10">
+        <div class="flex items-center gap-1">
+            <div class="bg-[#24963f] text-white rounded-full w-9 h-9 flex items-center justify-center font-bold text-xl">L</div>
+            <span class="text-2xl font-extrabold text-[#111] tracking-tighter">LocalKart</span>
+        </div>
+
+        <div class="flex flex-col leading-tight">
+            <span class="text-[11px] text-gray-400 font-semibold">Your Location</span>
+            <span id="userLocation" class="text-[14px] font-bold text-black max-w-[220px] truncate">
+                Detecting location...
+            </span>
+        </div>
+    </div>
+
+    <div class="flex-1 max-w-xl mx-10">
+        <div class="relative">
+            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="text" placeholder='Search "bread"' class="w-full bg-white border border-gray-200 rounded-lg py-2 pl-10 pr-4 text-[13px] outline-none">
+        </div>
+    </div>
+
+    <div class="flex items-center gap-6">
+        <button class="text-[14px] font-semibold text-gray-600" id="loginBtn">Login</button>
+        <button class="bg-white border border-gray-200 px-4 py-2 rounded-lg flex items-center gap-2 text-[13px] font-bold text-gray-700 shadow-sm">
+            <i class="fas fa-shopping-cart text-[#24963f]"></i> My Cart (<span id="cartCount">0</span>)
+        </button>
+    </div>
+</header>
+
+<main class="flex h-[calc(100vh-110px)] mx-8 mt-3 bg-white rounded-t-xl overflow-hidden border border-gray-200 shadow-xl">
+    
+    <aside class="w-20 border-r border-gray-100 flex flex-col items-center bg-white shrink-0 overflow-y-auto custom-scroll">
+
+        <!-- Milk (inactive) -->
+        <a href="./dashboard.html" class="w-full flex items-center opacity-60 hover:opacity-100">
+    <div class="w-1 h-12"></div>
+    <div class="flex-1 flex flex-col items-center py-4">
+        <img src="https://cdn-icons-png.flaticon.com/128/372/372971.png" class="w-7 h-7">
+        <span class="text-[9px] font-semibold text-gray-900 mt-2 uppercase">Milk</span>
+    </div>
+</a>
+
+        <!-- Bread ACTIVE -->
+         <a href="./breadandpav.html" 
+                class="flex flex-col items-center py-5 border-b border-gray-50 opacity-60 w-full hover:opacity-100 cursor-pointer">
+    
+                 <img src="https://cdn-icons-png.flaticon.com/128/3014/3014535.png" class="w-7 h-7" alt="">
+    
+                 <span class="text-[9px] font-semibold text-center mt-2 leading-none">
+                 Bread & <br> Pav
+            </span>
+                </a>
+
+        <div class="w-full flex items-center">
+    <div class="w-1 bg-[#24963f] h-12 rounded-r-full"></div>
+    <div class="flex-1 flex flex-col items-center py-4 bg-[#f4fdf6]">
+        <img src="https://cdn-icons-png.flaticon.com/128/837/837160.png" class="w-7 h-7">
+        <span class="text-[9px] font-bold mt-2 uppercase">Eggs</span>
+    </div>
+</div>
+
+        <a href="./files/kelloggs.html" class="flex flex-col items-center py-5 border-b border-gray-50 opacity-60 w-full hover:opacity-100">
+            <img src="https://cdn-icons-png.flaticon.com/128/2913/2913959.png" class="w-7 h-7">
+            <span class="text-[9px] font-semibold mt-2">Kellogg's <br> & Cereals</span>
+        </a>
+
+        <a href="./files/muesli.html" class="flex flex-col items-center py-5 border-b border-gray-50 opacity-60 w-full hover:opacity-100">
+            <img src="https://cdn-icons-png.flaticon.com/128/3014/3014488.png" class="w-7 h-7">
+            <span class="text-[9px] font-semibold mt-2">Muesli & <br> Granola</span>
+        </a>
+    </aside>
+
+    <section class="flex-1 p-5 overflow-y-auto custom-scroll bg-white">
+        <h2 class="text-[15px] font-extrabold text-gray-800 mb-5">Buy Bread & Pav</h2>
+
+        <div class="grid grid-cols-6 gap-3">
+<!-- EGGS PRODUCTS -->
+
+<div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md transition-shadow">
+    <div class="h-28 flex items-center justify-center mb-2">
+        <img src="https://cdn-icons-png.flaticon.com/512/837/837160.png" class="h-24 w-auto object-contain">
+    </div>
+    <div class="flex items-center text-[9px] font-bold text-orange-400 mb-1 uppercase">
+        <i class="far fa-clock mr-1"></i> 16 MINS
+    </div>
+    <h3 class="text-[12px] font-bold text-gray-800 h-8">Farm Fresh Eggs</h3>
+    <p class="text-[11px] text-gray-400 mt-1">6 pcs</p>
+    <div class="distance text-[10px] font-bold mb-1" data-distance="2"></div>
+
+    <div class="flex items-center justify-between mt-auto">
+        <span class="text-sm font-bold">₹60</span>
+        <div id="cart-e1" class="inline-block">
+            <button onclick="addToCart('e1')" class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+        </div>
+    </div>
+</div>
+
+<div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md transition-shadow">
+    <div class="h-28 flex items-center justify-center mb-2">
+        <img src="https://cdn-icons-png.flaticon.com/512/837/837160.png" class="h-24 w-auto object-contain">
+    </div>
+    <div class="flex items-center text-[9px] font-bold text-orange-400 mb-1 uppercase">
+        <i class="far fa-clock mr-1"></i> 16 MINS
+    </div>
+    <h3 class="text-[12px] font-bold text-gray-800 h-8">Brown Eggs</h3>
+    <p class="text-[11px] text-gray-400 mt-1">6 pcs</p>
+    <div class="distance text-[10px] font-bold mb-1" data-distance="3"></div>
+
+    <div class="flex items-center justify-between mt-auto">
+        <span class="text-sm font-bold">₹70</span>
+        <div id="cart-e2" class="inline-block">
+            <button onclick="addToCart('e2')" class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+        </div>
+    </div>
+</div>
+
+<div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md transition-shadow">
+    <div class="h-28 flex items-center justify-center mb-2">
+        <img src="https://cdn-icons-png.flaticon.com/512/837/837160.png" class="h-24 w-auto object-contain">
+    </div>
+    <div class="flex items-center text-[9px] font-bold text-orange-400 mb-1 uppercase">
+        <i class="far fa-clock mr-1"></i> 16 MINS
+    </div>
+    <h3 class="text-[12px] font-bold text-gray-800 h-8">Organic Eggs</h3>
+    <p class="text-[11px] text-gray-400 mt-1">12 pcs</p>
+    <div class="distance text-[10px] font-bold mb-1" data-distance="4"></div>
+
+    <div class="flex items-center justify-between mt-auto">
+        <span class="text-sm font-bold">₹120</span>
+        <div id="cart-e3" class="inline-block">
+            <button onclick="addToCart('e3')" class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+        </div>
+    </div>
+</div>
+
+<div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md transition-shadow">
+    <div class="h-28 flex items-center justify-center mb-2">
+        <img src="https://cdn-icons-png.flaticon.com/512/837/837160.png" class="h-24 w-auto object-contain">
+    </div>
+    <div class="flex items-center text-[9px] font-bold text-orange-400 mb-1 uppercase">
+        <i class="far fa-clock mr-1"></i> 16 MINS
+    </div>
+    <h3 class="text-[12px] font-bold text-gray-800 h-8">Desi Eggs</h3>
+    <p class="text-[11px] text-gray-400 mt-1">6 pcs</p>
+    <div class="distance text-[10px] font-bold mb-1" data-distance="1"></div>
+
+    <div class="flex items-center justify-between mt-auto">
+        <span class="text-sm font-bold">₹90</span>
+        <div id="cart-e4" class="inline-block">
+            <button onclick="addToCart('e4')" class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+        </div>
+    </div>
+</div>
+
+<div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md transition-shadow">
+    <div class="h-28 flex items-center justify-center mb-2">
+        <img src="https://cdn-icons-png.flaticon.com/512/837/837160.png" class="h-24 w-auto object-contain">
+    </div>
+    <div class="flex items-center text-[9px] font-bold text-orange-400 mb-1 uppercase">
+        <i class="far fa-clock mr-1"></i> 16 MINS
+    </div>
+    <h3 class="text-[12px] font-bold text-gray-800 h-8">Egg Tray</h3>
+    <p class="text-[11px] text-gray-400 mt-1">30 pcs</p>
+    <div class="distance text-[10px] font-bold mb-1" data-distance="5"></div>
+
+    <div class="flex items-center justify-between mt-auto">
+        <span class="text-sm font-bold">₹240</span>
+        <div id="cart-e5" class="inline-block">
+            <button onclick="addToCart('e5')" class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">ADD</button>
+        </div>
+    </div>
+</div>
+
+
+        </div>
+    </section>
+</main>
+
+<script>
+const user = JSON.parse(localStorage.getItem("user"));
+const USER_ID = user?.id;
+
+if (!USER_ID) {
+    window.location.href = "login.html";
+}
+
+const loginBtn = document.getElementById("loginBtn");
+
+if (user) {
+    loginBtn.innerText = "Logout";
+    loginBtn.onclick = () => {
+        localStorage.clear();
+        window.location.href = "login.html";
+    };
+}
+
+async function addToCart(productId) {
+    await fetch("http://localhost:5000/api/cart/add", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ userId: USER_ID, productId })
+    });
+
+    renderQuantityControls(productId, 1);
+    updateCartCount();
+}
+
+function renderQuantityControls(productId, qty) {
+    const container = document.getElementById(`cart-${productId}`);
+
+    container.innerHTML = `
+        <div class="flex items-center justify-between bg-[#8cc63f] text-white text-[11px] font-extrabold px-3 py-1.5 rounded-lg w-[80px]">
+            <button onclick="decreaseQty('${productId}', ${qty})">-</button>
+            <span>${qty}</span>
+            <button onclick="increaseQty('${productId}', ${qty})">+</button>
+        </div>
+    `;
+}
+
+async function increaseQty(productId, qty) {
+    qty++;
+
+    await fetch("http://localhost:5000/api/cart/add", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ userId: USER_ID, productId })
+    });
+
+    renderQuantityControls(productId, qty);
+    updateCartCount();
+}
+
+async function decreaseQty(productId, qty) {
+    qty--;
+
+    await fetch("http://localhost:5000/api/cart/decrease", {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ userId: USER_ID, productId })
+    });
+
+    const container = document.getElementById(`cart-${productId}`);
+
+    if (qty <= 0) {
+        container.innerHTML = `
+            <button onclick="addToCart('${productId}')" 
+            class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">
+            ADD
+            </button>
+        `;
+    } else {
+        renderQuantityControls(productId, qty);
+    }
+
+    updateCartCount();
+}
+
+async function updateCartCount() {
+    const res = await fetch(`http://localhost:5000/api/cart/${USER_ID}`);
+    const cart = await res.json();
+
+    let total = 0;
+    cart.items?.forEach(i => total += i.quantity);
+    document.getElementById("cartCount").innerText = total;
+}
+
+updateCartCount();
+</script>
+
+</body>
+</html>
