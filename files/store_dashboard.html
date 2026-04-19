@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Store Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 p-6">
+
+<h1 class="text-2xl font-bold mb-6">Store Manager</h1>
+
+<!-- ADD PRODUCT -->
+<div class="bg-white p-4 rounded shadow mb-6">
+  <h2 class="font-bold mb-3">Add Product</h2>
+
+  <input id="name" placeholder="Product Name" class="border p-2 mb-2 w-full">
+  <input id="price" placeholder="Price" class="border p-2 mb-2 w-full">
+  <input id="image" placeholder="Image URL" class="border p-2 mb-2 w-full">
+
+  <button onclick="addProduct()" class="bg-green-600 text-white px-4 py-2 rounded">
+    Add Product
+  </button>
+</div>
+
+<!-- PRODUCT LIST -->
+<div class="bg-white p-4 rounded shadow">
+  <h2 class="font-bold mb-3">Your Products</h2>
+
+  <div id="productList"></div>
+</div>
+
+<script>
+const store = JSON.parse(localStorage.getItem("store"));
+
+if (!store) {
+  alert("Login required");
+  window.location.href = "store-login.html";
+}
+
+// 🔥 LOAD PRODUCTS
+async function loadProducts() {
+  const res = await fetch(`https://localkart-backend-hbou.onrender.com/api/products`);
+  const products = await res.json();
+
+  const myProducts = products.filter(p => p.store === store.id);
+
+  const container = document.getElementById("productList");
+  container.innerHTML = "";
+
+  myProducts.forEach(p => {
+    container.innerHTML += `
+      <div class="border p-3 mb-2 flex justify-between items-center">
+        <div>
+          <p class="font-bold">${p.name}</p>
+          <p>₹${p.price}</p>
+        </div>
+        <button onclick="deleteProduct('${p._id}')" class="bg-red-500 text-white px-3 py-1 rounded">
+          Delete
+        </button>
+      </div>
+    `;
+  });
+}
+
+// ➕ ADD PRODUCT
+async function addProduct() {
+  const name = document.getElementById("name").value;
+  const price = document.getElementById("price").value;
+  const image = document.getElementById("image").value;
+
+  await fetch("https://localkart-backend-hbou.onrender.com/api/products", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      name,
+      price,
+      image,
+      store: store.id
+    })
+  });
+
+  alert("Product added");
+  loadProducts();
+}
+
+// ❌ DELETE PRODUCT
+async function deleteProduct(id) {
+  await fetch(`https://localkart-backend-hbou.onrender.com/api/products/${id}`, {
+    method: "DELETE"
+  });
+
+  alert("Deleted");
+  loadProducts();
+}
+
+loadProducts();
+</script>
+
+</body>
+</html>
