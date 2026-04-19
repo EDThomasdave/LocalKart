@@ -74,10 +74,12 @@ async function addProduct() {
   formData.append("image", document.getElementById("image").files[0]);
   formData.append("store", store.id);
 
-  await fetch("/api/products", {
+  await fetch("https://localkart-backend-hbou.onrender.com/api/products", {
     method: "POST",
     body: formData
   });
+
+  alert("Product added");
 }
 
 // ❌ DELETE PRODUCT
