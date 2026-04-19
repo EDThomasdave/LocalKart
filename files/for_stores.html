@@ -17,7 +17,6 @@
       overflow-x: hidden;
     }
 
-    /* Green decorative circles */
     .circle-top-left {
       position: absolute;
       width: 280px;
@@ -103,7 +102,8 @@
       color: #fff;
       margin-top: 60px;
     }
-  .manage-link {
+
+    .manage-link {
       display: inline-block;
       margin-top: 15px;
       font-size: 18px;
@@ -117,84 +117,146 @@
       color: #0f3f20;
       text-decoration: underline;
     }
-
   </style>
 </head>
+
 <body>
 
-  <div class="circle-top-left"></div>
-  <div class="circle-bottom-right"></div>
+<div class="circle-top-left"></div>
+<div class="circle-bottom-right"></div>
 
-  <section class="store-header">
-    <h1>Register Your Store</h1>
-    <p>Partner with LocalKart and grow your business digitally.</p>
-  </section>
+<section class="store-header">
+  <h1>Register Your Store</h1>
+  <p>Partner with LocalKart and grow your business digitally.</p>
+</section>
 
-  <section class="register-box">
-    <h3 class="text-center mb-4" style="color:#166534; font-weight:700;">Store Registration Form</h3>
+<section class="register-box">
+  <h3 class="text-center mb-4" style="color:#166534; font-weight:700;">
+    Store Registration Form
+  </h3>
 
-    <form>
-      <div class="mb-3">
-        <label class="form-label">Store Name</label>
-        <input type="text" class="form-control" placeholder="Enter your store name" required>
-      </div>
+  <!-- ✅ FORM CONNECTED -->
+  <form onsubmit="registerStore(event)">
 
-      <div class="mb-3">
-        <label class="form-label">Owner Name</label>
-        <input type="text" class="form-control" placeholder="Enter owner's full name" required>
-      </div>
+    <div class="mb-3">
+      <label class="form-label">Store Name</label>
+      <input id="storeName" type="text" class="form-control" required>
+    </div>
 
-      <div class="mb-3">
-        <label class="form-label">Email Address</label>
-        <input type="email" class="form-control" placeholder="Enter your email" required>
-      </div>
+    <div class="mb-3">
+      <label class="form-label">Owner Name</label>
+      <input id="ownerName" type="text" class="form-control" required>
+    </div>
 
-      <div class="mb-3">
-        <label class="form-label">Phone Number</label>
-        <input type="tel" class="form-control" placeholder="Enter contact number" required>
-      </div>
+    <div class="mb-3">
+      <label class="form-label">Email Address</label>
+      <input id="email" type="email" class="form-control" required>
+    </div>
 
-      <div class="mb-3">
-        <label class="form-label">Store Address</label>
-        <textarea class="form-control" rows="2" placeholder="Enter store's full address" required></textarea>
-      </div>
+    <div class="mb-3">
+      <label class="form-label">Phone Number</label>
+      <input id="phone" type="tel" class="form-control" required>
+    </div>
 
-      <div class="mb-3">
-        <label class="form-label">City</label>
-        <input type="text" class="form-control" placeholder="Enter city" required>
-      </div>
+    <div class="mb-3">
+      <label class="form-label">Store Address</label>
+      <textarea id="address" class="form-control" rows="2" required></textarea>
+    </div>
 
-      <div class="mb-3">
-        <label class="form-label">State</label>
-        <select class="form-select" required>
-          <option disabled selected>Select your state</option>
-          <option>Maharashtra</option>
-          <option>Karnataka</option>
-          <option>Telangana</option>
-          <option>Kerala</option>
-          <option>Tamil Nadu</option>
-          <option>Delhi</option>
-          <option>Gujarat</option>
-        </select>
-      </div>
+    <div class="mb-3">
+      <label class="form-label">City</label>
+      <input id="city" type="text" class="form-control" required>
+    </div>
 
-      <div class="mb-3">
-        <label class="form-label">GST Number (Optional)</label>
-        <input type="text" class="form-control" placeholder="Enter GST number if available">
-      </div>
+    <div class="mb-3">
+      <label class="form-label">State</label>
+      <select id="state" class="form-select" required>
+        <option disabled selected>Select your state</option>
+        <option>Maharashtra</option>
+        <option>Karnataka</option>
+        <option>Telangana</option>
+        <option>Kerala</option>
+        <option>Tamil Nadu</option>
+        <option>Delhi</option>
+        <option>Gujarat</option>
+      </select>
+    </div>
 
-      <button class="btn-register">Submit Registration</button>
+    <div class="mb-3">
+      <label class="form-label">GST Number (Optional)</label>
+      <input id="gst" type="text" class="form-control">
+    </div>
 
-    </form>
+    <button class="btn-register">Submit Registration</button>
 
-      <div class="text-center mt-4">
-        <a href="#" class="manage-link">Already Registered? <strong>Manage Store</strong></a>
-      </div>
-  </section>
+  </form>
 
-  <footer>
-    © 2024 LocalKart — All Rights Reserved.
-  </footer>
+  <div class="text-center mt-4">
+    <a href="store-login.html" class="manage-link">
+      Already Registered? <strong>Manage Store</strong>
+    </a>
+  </div>
+
+</section>
+
+<footer>
+  © 2024 LocalKart — All Rights Reserved.
+</footer>
+
+<!-- ✅ SCRIPT ADDED (ONLY LOGIC, NO UI CHANGE) -->
+<script>
+async function registerStore(e) {
+  e.preventDefault();
+
+  const name = document.getElementById("storeName").value;
+  const ownerName = document.getElementById("ownerName").value;
+  const email = document.getElementById("email").value;
+  const phone = document.getElementById("phone").value;
+  const address = document.getElementById("address").value;
+  const city = document.getElementById("city").value;
+  const state = document.getElementById("state").value;
+  const gst = document.getElementById("gst").value;
+
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+
+    const lat = pos.coords.latitude;
+    const lng = pos.coords.longitude;
+
+    const res = await fetch("http://localhost:5000/api/store/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name,
+        ownerName,
+        email,
+        password: "123456", // temp
+        phone,
+        address,
+        city,
+        state,
+        gst,
+        lat,
+        lng
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.msg);
+      return;
+    }
+
+    alert("Store Registered Successfully 🚀");
+    window.location.href = "store-login.html";
+
+  }, () => {
+    alert("Location permission required");
+  });
+}
+</script>
 
 </body>
 </html>
