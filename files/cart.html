@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LocalKart - Cart</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+body { font-family: 'Inter', sans-serif; background-color: #a5b39c; }
+</style>
+</head>
+
+<body class="m-0 p-0">
+
+<!-- HEADER -->
+<header class="bg-[#f0f2f1] px-8 py-3 flex items-center justify-between border-b">
+    
+    <div class="flex items-center gap-2">
+        <div class="bg-[#24963f] text-white w-9 h-9 rounded-full flex items-center justify-center font-bold">L</div>
+        <span class="text-xl font-extrabold">LocalKart</span>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="flex-1 max-w-lg mx-10">
+        <input id="searchCart" type="text" placeholder="Search in cart..."
+        class="w-full border rounded-lg px-4 py-2 text-sm">
+    </div>
+
+    <a href="../index.html" class="text-sm font-bold text-[#24963f]">← Continue Shopping</a>
+
+</header>
+
+<!-- MAIN -->
+<main class="p-6">
+
+    <div class="bg-white rounded-xl shadow p-5">
+
+        <h2 class="text-lg font-extrabold mb-4">My Cart</h2>
+
+        <!-- CART ITEMS -->
+        <div id="cartItems" class="space-y-4"></div>
+
+        <!-- EMPTY STATE -->
+        <p id="emptyText" class="text-center text-gray-400 hidden">Your cart is empty</p>
+
+        <!-- TOTAL -->
+        <div class="border-t mt-6 pt-4 flex justify-between items-center">
+            <span class="text-lg font-bold">Total:</span>
+            <span id="totalPrice" class="text-xl font-extrabold">₹0</span>
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="flex gap-3 mt-4">
+            <button onclick="clearCart()" class="w-full bg-gray-200 py-2 rounded-lg font-bold">
+                Clear Cart
+            </button>
+
+            <button class="w-full bg-[#24963f] text-white py-2 rounded-lg font-bold">
+                Checkout
+            </button>
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+
+// 🔐 USER
+const user = JSON.parse(localStorage.getItem("user"));
+const USER_ID = user?.id;
+
+if (!USER_ID) {
+    alert("Login required");
+    window.location.href = "login.html";
+}
+
+let fullCart = [];
+
+// 📦 LOAD CART
+async function loadCart() {
+
+    const res = await fetch(`https://localkart-backend-hbou.onrender.com/api/cart/${USER_ID}`);
+    const data = await res.json();
+
+    fullCart = data.items || [];
+
+    renderCart(fullCart);
+}
+
+// 🎨 RENDER
+function renderCart(items) {
+
+    const container = document.getElementById("cartItems");
+    const empty = document.getElementById("emptyText");
+
+    container.innerHTML = "";
+
+    if (items.length === 0) {
+        empty.classList.remove("hidden");
+        document.getElementById("totalPrice").innerText = "₹0";
+        return;
+    }
+
+    empty.classList.add("hidden");
+
+    let total = 0;
+
+    items.forEach(item => {
+
+        const price = item.product?.price || 0;
+        const name = item.product?.name || "Product";
+        const img = item.product?.image || "https://via.placeholder.com/80";
+        const qty = item.quantity;
+
+        total += price * qty;
+
+        const div = document.createElement("div");
+        div.className = "flex items-center justify-between border p-3 rounded-lg";
+
+        div.innerHTML = `
+            <div class="flex items-center gap-3">
+                <img src="${img}" class="w-16 h-16 object-contain">
+
+                <div>
+                    <h3 class="font-bold text-sm">${name}</h3>
+                    <p class="text-gray-400 text-xs">₹${price}</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+
+                <button onclick="decrease('${item.productId}', ${qty})"
+                class="px-2 bg-gray-200 rounded">-</button>
+
+                <span class="font-bold">${qty}</span>
+
+                <button onclick="increase('${item.productId}', ${qty})"
+                class="px-2 bg-gray-200 rounded">+</button>
+
+                <button onclick="removeItem('${item.productId}')"
+                class="text-red-500 text-sm ml-3">Remove</button>
+
+            </div>
+        `;
+
+        container.appendChild(div);
+    });
+
+    document.getElementById("totalPrice").innerText = "₹" + total;
+}
+
+// ➕ INCREASE
+async function increase(id) {
+    await fetch("https://localkart-backend-hbou.onrender.com/api/cart/add", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ userId: USER_ID, productId: id })
+    });
+
+    loadCart();
+}
+
+// ➖ DECREASE
+async function decrease(id) {
+    await fetch("https://localkart-backend-hbou.onrender.com/api/cart/decrease", {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ userId: USER_ID, productId: id })
+    });
+
+    loadCart();
+}
+
+// ❌ REMOVE
+async function removeItem(id) {
+    await fetch("https://localkart-backend-hbou.onrender.com/api/cart/remove", {
+        method: "DELETE",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ userId: USER_ID, productId: id })
+    });
+
+    loadCart();
+}
+
+// 🧹 CLEAR CART
+async function clearCart() {
+    await fetch("https://localkart-backend-hbou.onrender.com/api/cart/clear", {
+        method: "DELETE",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ userId: USER_ID })
+    });
+
+    loadCart();
+}
+
+// 🔍 SEARCH
+document.getElementById("searchCart").addEventListener("input", function() {
+    const value = this.value.toLowerCase();
+
+    const filtered = fullCart.filter(item =>
+        item.product?.name?.toLowerCase().includes(value)
+    );
+
+    renderCart(filtered);
+});
+
+// 🚀 INIT
+loadCart();
+
+</script>
+
+</body>
+</html>
