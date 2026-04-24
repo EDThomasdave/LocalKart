@@ -202,7 +202,9 @@
       <input id="gst" type="text" class="form-control">
     </div>
 
-    <button class="btn-register">Submit Registration</button>
+    <button type="button" onclick="registerStore(event)" class="btn-register">
+  Submit Registration
+</button>
 
   </form>
 
@@ -220,6 +222,7 @@
 
 <!-- ✅ SCRIPT ADDED (ONLY LOGIC, NO UI CHANGE) -->
 <script>
+console.log("SCRIPT LOADED");
 let map;
 let marker;
 let accuracyCircle;
@@ -236,30 +239,38 @@ function openMap() {
         attribution: '&copy; OpenStreetMap'
       }).addTo(map);
 
-      // 🔥 TRIGGER LOCATION PERMISSION (important)
-      navigator.geolocation.getCurrentPosition(
-        () => console.log("Permission triggered ✅"),
-        () => console.log("Permission denied ❌")
-      );
+      // 🔥 AUTO ASK LOCATION PERMISSION (REAL TRIGGER)
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            console.log("Permission granted ✅");
+
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+
+            map.setView([lat, lng], 15);
+          },
+          (err) => {
+            console.log("Permission denied ❌", err);
+          },
+          {
+            enableHighAccuracy: true
+          }
+        );
+      }
 
       // 📌 CLICK TO SELECT LOCATION
       map.on("click", async function(e) {
         const { lat, lng } = e.latlng;
 
-        if (marker) map.removeLayer(marker);
-        if (accuracyCircle) map.removeLayer(accuracyCircle);
-
-        marker = L.marker([lat, lng]).addTo(map);
-
-        document.getElementById("lat").value = lat;
-        document.getElementById("lng").value = lng;
+        setMarker(lat, lng);
 
         try {
           const res = await fetch(
             `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
           );
-
           const data = await res.json();
+
           document.getElementById("address").value = data.display_name;
 
         } catch (err) {
@@ -273,7 +284,27 @@ function openMap() {
   }, 200);
 }
 
-// 📍 USE MY LOCATION (FIXED + ACCURATE)
+// 📍 COMMON MARKER FUNCTION (DRY CODE)
+function setMarker(lat, lng, accuracy = null) {
+  if (marker) map.removeLayer(marker);
+  if (accuracyCircle) map.removeLayer(accuracyCircle);
+
+  marker = L.marker([lat, lng]).addTo(map);
+
+  document.getElementById("lat").value = lat;
+  document.getElementById("lng").value = lng;
+
+  // 🔥 Only show circle if accuracy exists
+  if (accuracy) {
+    accuracyCircle = L.circle([lat, lng], {
+      radius: Math.min(accuracy, 80), // smaller circle
+      color: "blue",
+      fillOpacity: 0.15
+    }).addTo(map);
+  }
+}
+
+// 📍 USE MY LOCATION (IMPROVED)
 function useMyLocation() {
   if (!map) {
     alert("Open map first 📍");
@@ -288,26 +319,14 @@ function useMyLocation() {
 
       console.log("Accuracy:", accuracy);
 
-      // ❌ reject bad accuracy
-if (accuracy > 1000) {
-  console.warn("Low accuracy");
-}
+      // ⚠️ warn but don't block
+      if (accuracy > 1000) {
+        alert("Location not very accurate ⚠️\nYou can adjust pin manually.");
+      }
+
       map.setView([lat, lng], 17);
 
-      if (marker) map.removeLayer(marker);
-      if (accuracyCircle) map.removeLayer(accuracyCircle);
-
-      marker = L.marker([lat, lng]).addTo(map);
-
-      // 🔥 LIMIT CIRCLE SIZE
-      accuracyCircle = L.circle([lat, lng], {
-        radius: Math.min(accuracy, 100),
-        color: "blue",
-        fillOpacity: 0.2
-      }).addTo(map);
-
-      document.getElementById("lat").value = lat;
-      document.getElementById("lng").value = lng;
+      setMarker(lat, lng, accuracy);
 
       try {
         const res = await fetch(
@@ -332,7 +351,6 @@ if (accuracy > 1000) {
       }
     },
 
-    // 🔥 HIGH ACCURACY SETTINGS
     {
       enableHighAccuracy: true,
       timeout: 15000,
@@ -344,6 +362,58 @@ if (accuracy > 1000) {
 // 📍 CLOSE MAP
 function closeMap() {
   document.getElementById("mapModal").style.display = "none";
+}
+
+async function registerStore(e) {
+  console.log("REGISTER WORKING ✅");
+
+  if (e) e.preventDefault();
+
+  const name = document.getElementById("storeName").value;
+  const ownerName = document.getElementById("ownerName").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const lat = document.getElementById("lat").value;
+  const lng = document.getElementById("lng").value;
+
+  try {
+    const res = await fetch("https://localkart-backend-hbou.onrender.com/api/store/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name,
+        ownerName,
+        email,
+        password,
+        location: {
+  lat: Number(lat),
+  lng: Number(lng)
+}
+      })
+    });
+
+    const data = await res.json();
+
+    console.log(data);
+
+    if (!res.ok) {
+      alert(data.msg);
+      return;
+    }
+
+    alert("🎉 Store Registered Successfully!");
+
+    localStorage.setItem("store", JSON.stringify(data.store));
+
+    window.location.href = "store_dashboard.html";
+
+  } catch (err) {
+    console.log(err);
+    alert("Server error ❌");
+  }
 }
 </script>
 <div id="mapModal" 
