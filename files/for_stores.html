@@ -289,11 +289,9 @@ function useMyLocation() {
       console.log("Accuracy:", accuracy);
 
       // ❌ reject bad accuracy
-      if (accuracy > 1000) {
-        alert("Low accuracy ❌\nTurn on GPS or use mobile");
-        return;
-      }
-
+if (accuracy > 1000) {
+  console.warn("Low accuracy");
+}
       map.setView([lat, lng], 17);
 
       if (marker) map.removeLayer(marker);
