@@ -434,6 +434,37 @@ navigator.geolocation.getCurrentPosition(async (pos) => {
 }, () => {
     document.getElementById("userLocation").innerText = "Location denied";
 });
+async function loadProducts() {
+  const res = await fetch("https://localkart-backend-hbou.onrender.com/api/products");
+  const products = await res.json();
+
+  const container = document.getElementById("productGrid");
+  container.innerHTML = "";
+
+  products.forEach(p => {
+    container.innerHTML += `
+      <div class="border p-3">
+        <img src="${p.image}" class="h-24">
+        <h3>${p.name}</h3>
+        <p>₹${p.price}</p>
+      </div>
+    `;
+  });
+}
+
+loadProducts();
+
+async function searchProducts() {
+  const query = document.getElementById("searchInput").value;
+
+  const res = await fetch(
+    `https://localkart-backend-hbou.onrender.com/api/products?search=${query}`
+  );
+
+  const data = await res.json();
+
+  displayProducts(data); // your render function
+}
 </script>
 </body>
 </html>
