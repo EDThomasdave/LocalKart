@@ -216,6 +216,7 @@ async function registerStore(e) {
   const name = document.getElementById("storeName").value;
   const ownerName = document.getElementById("ownerName").value;
   const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
   const phone = document.getElementById("phone").value;
   const address = document.getElementById("address").value;
   const city = document.getElementById("city").value;
@@ -236,16 +237,35 @@ async function registerStore(e) {
         name,
         ownerName,
         email,
-        password: "123456", // temp
+        password,
         phone,
         address,
         city,
         state,
         gst,
-        lat,
-        lng
+
+        // 🔥 IMPORTANT
+        location: {
+          lat,
+          lng
+        }
       })
     });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.msg);
+      return;
+    }
+
+    alert("Store Registered Successfully 🚀");
+    window.location.href = "store_login.html";
+
+  }, () => {
+    alert("Location permission required");
+  });
+}
 
     const data = await res.json();
 
