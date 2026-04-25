@@ -158,32 +158,7 @@ async function checkout() {
   }
 }
 
-    // 🔔 SEND ORDER
-    await fetch("https://localkart-backend-hbou.onrender.com/api/order", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        storeId: store._id
-      })
-    });
 
-    alert("Order placed successfully (COD)");
-
-    const confirmNav = confirm("Navigate to store?");
-    if (confirmNav) {
-      openMaps(store.location.lat, store.location.lng);
-    }
-
-    // 🧹 clear cart after order
-    await clearCart();
-
-  } catch (err) {
-    console.log(err);
-    alert("Checkout failed");
-  }
-}
 function openMaps(lat, lng) {
   const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
   window.open(url, "_blank");
@@ -315,11 +290,9 @@ async function removeItem(id) {
 
 // 🧹 CLEAR CART
 async function clearCart() {
-    await fetch("https://localkart-backend-hbou.onrender.com/api/cart/clear", {
-        method: "DELETE",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ userId: USER_ID })
-    });
+    await fetch(`https://localkart-backend-hbou.onrender.com/api/cart/clear?userId=${USER_ID}`, {
+  method: "DELETE"
+});
 
     loadCart();
 }
