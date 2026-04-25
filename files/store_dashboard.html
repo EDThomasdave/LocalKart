@@ -153,7 +153,12 @@ async function deleteProduct(id) {
 
 loadProducts();
 
-// 🔔 SOCKET CONNECTION
+
+</script>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js">
+</script>
+<script>
+  // 🔔 SOCKET CONNECTION
 const socket = io("https://localkart-backend-hbou.onrender.com");
 
 // get store from localStorage
@@ -167,7 +172,7 @@ if (STORE_ID) {
 }
 
 // listen for new orders
-socket.on("newOrder", (data) => {
+socket.on("new-order", (data) => {
   console.log("NEW ORDER:", data);
 
   // 🔥 simple UI
@@ -179,8 +184,6 @@ socket.on("newOrder", (data) => {
 
   setTimeout(() => notif.remove(), 4000);
 });
-</script>
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js">
 </script>
 
 </body>
