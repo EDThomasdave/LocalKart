@@ -45,7 +45,8 @@
 </div>
 
 <script>
-
+const storeData = JSON.parse(localStorage.getItem("store"));
+const STORE_ID = storeData?.id;
 async function loadOrders() {
   if (!STORE_ID) return; // 🔥 prevent crash
 
@@ -226,13 +227,8 @@ loadProducts();
 <script>
 const socket = io("https://localkart-backend-hbou.onrender.com");
 
-const storeData = JSON.parse(localStorage.getItem("store"));
-const STORE_ID = storeData?.id;
 
-if (STORE_ID) {
-  socket.emit("joinStore", STORE_ID);
-  console.log("Joined store socket:", STORE_ID);
-}
+
 
 socket.on("new-order", (order) => {
   console.log("New order received:", order);
@@ -255,6 +251,7 @@ if (STORE_ID) {
 
   loadOrders(); // 🔥 load AFTER store is ready
 }
+setInterval(loadOrders, 5000);
 </script>
 
 </body>
