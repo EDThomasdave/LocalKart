@@ -88,24 +88,75 @@ async function checkout() {
 
     let store = firstItem.product.store;
 
-    // 🔥 FALLBACK (VERY IMPORTANT)
+    // 🔥 FALLBACK (keep this)
     if (!store || !store.location) {
-      console.log("⚠️ Store not populated, refetching...");
-
       const res2 = await fetch(
         `https://localkart-backend-hbou.onrender.com/api/products?store=${firstItem.product.store}`
       );
-
       const data = await res2.json();
-
       store = data[0]?.store;
     }
 
     if (!store || !store.location) {
       alert("Store location not found ❌");
-      console.log("DEBUG STORE:", store);
       return;
     }
+
+    // 🔥 BUILD ORDER DATA (IMPORTANT)
+    const orderData = {
+      userId: USER_ID,
+      storeId: store._id,
+      items: cart.items.map(i => ({
+        name: i.product.name,
+        price: i.product.price,
+        quantity: i.quantity
+      })),
+      total: cart.items.reduce(
+        (sum, i) => sum + i.product.price * i.quantity,
+        0
+      )
+    };
+
+    console.log("ORDER DATA:", orderData);
+
+    // 🔔 SEND ORDER
+    const orderRes = await fetch(
+      "https://localkart-backend-hbou.onrender.com/api/order",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(orderData)
+      }
+    );
+
+    if (!orderRes.ok) {
+      alert("Order failed ❌");
+      return;
+    }
+
+    alert("Order placed successfully (COD)");
+
+    // 🧹 CLEAR CART (optional but recommended)
+    await fetch(
+      `https://localkart-backend-hbou.onrender.com/api/cart/clear?userId=${USER_ID}`,
+      { method: "DELETE" }
+    );
+
+    loadCart();
+
+    // 🗺 MAP NAVIGATION
+    const confirmNav = confirm("Navigate to store?");
+    if (confirmNav) {
+      openMaps(store.location.lat, store.location.lng);
+    }
+
+  } catch (err) {
+    console.log(err);
+    alert("Checkout failed");
+  }
+}
 
     // 🔔 SEND ORDER
     await fetch("https://localkart-backend-hbou.onrender.com/api/order", {
