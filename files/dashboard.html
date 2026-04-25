@@ -115,34 +115,33 @@
         </div>
     </div>
     <script>
-        function getDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371;
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
 
-    const a =
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(lat1 * Math.PI / 180) *
-        Math.cos(lat2 * Math.PI / 180) *
-        Math.sin(dLon/2) *
-        Math.sin(dLon/2);
+// 📍 DISTANCE FUNCTION
+function getDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
 
-    return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+  const a =
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon/2) *
+    Math.sin(dLon/2);
+
+  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
 }
 
-
-// ✅ ALSO ADD THIS JUST BELOW IT
+// 📍 USER LOCATION
 let userLat = null;
 let userLng = null;
 
 navigator.geolocation.getCurrentPosition(
-    (pos) => {
-        userLat = pos.coords.latitude;
-        userLng = pos.coords.longitude;
-    },
-    () => {
-        console.log("Location denied");
-    }
+  (pos) => {
+    userLat = pos.coords.latitude;
+    userLng = pos.coords.longitude;
+  },
+  () => console.log("Location denied")
 );
 
 // 🔐 USER AUTH
@@ -150,138 +149,144 @@ const user = JSON.parse(localStorage.getItem("user"));
 const USER_ID = user?.id;
 
 if (!USER_ID) {
-    alert("Please login first");
-    window.location.href = "login.html";
+  alert("Please login first");
+  window.location.href = "login.html";
 }
 
-// 🔓 LOGIN / LOGOUT BUTTON
+// 🔓 LOGIN BUTTON
 const loginBtn = document.getElementById("loginBtn");
 if (user) {
-    loginBtn.innerText = "Logout";
-    loginBtn.onclick = () => {
-        localStorage.clear();
-        window.location.href = "login.html";
-    };
+  loginBtn.innerText = "Logout";
+  loginBtn.onclick = () => {
+    localStorage.clear();
+    window.location.href = "login.html";
+  };
 }
 
 // 🛒 ADD TO CART
 async function addToCart(productId) {
-    await fetch("https://localkart-backend-hbou.onrender.com/api/cart/add", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            userId: USER_ID,
-            productId: productId
-        })
-    });
+  await fetch("https://localkart-backend-hbou.onrender.com/api/cart/add", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ userId: USER_ID, productId })
+  });
 
-    renderQuantityControls(productId, 1);
-    updateCartCount();
+  renderQuantityControls(productId, 1);
+  updateCartCount();
 }
 
-// ➕ UI UPDATE
+// 🔁 UI UPDATE
 function renderQuantityControls(productId, qty) {
-    const container = document.getElementById(`cart-${productId}`);
+  const container = document.getElementById(`cart-${productId}`);
+  if (!container) return;
 
-    container.innerHTML = `
-        <div class="flex items-center gap-2 bg-[#8cc63f] text-white px-2 py-1 rounded-lg">
-            <button onclick="decreaseQty('${productId}', ${qty})">-</button>
-            <span>${qty}</span>
-            <button onclick="increaseQty('${productId}', ${qty})">+</button>
-        </div>
-    `;
+  container.innerHTML = `
+    <div class="flex items-center gap-2 bg-[#8cc63f] text-white px-2 py-1 rounded-lg">
+      <button onclick="decreaseQty('${productId}', ${qty})">-</button>
+      <span>${qty}</span>
+      <button onclick="increaseQty('${productId}', ${qty})">+</button>
+    </div>
+  `;
 }
 
 // ➕ INCREASE
 async function increaseQty(productId, qty) {
-    qty++;
+  qty++;
 
-    await fetch("https://localkart-backend-hbou.onrender.com/api/cart/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: USER_ID, productId })
-    });
+  await fetch("https://localkart-backend-hbou.onrender.com/api/cart/add", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ userId: USER_ID, productId })
+  });
 
-    renderQuantityControls(productId, qty);
-    updateCartCount();
+  renderQuantityControls(productId, qty);
+  updateCartCount();
 }
 
 // ➖ DECREASE
 async function decreaseQty(productId, qty) {
-    qty--;
+  qty--;
 
-    await fetch("https://localkart-backend-hbou.onrender.com/api/cart/decrease", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: USER_ID, productId })
-    });
+  await fetch("https://localkart-backend-hbou.onrender.com/api/cart/decrease", {
+    method: "PUT",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ userId: USER_ID, productId })
+  });
 
-    if (qty <= 0) {
-        document.getElementById(`cart-${productId}`).innerHTML = `
-            <button onclick="addToCart('${productId}')" 
-            class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">
-                ADD
-            </button>
-        `;
-    } else {
-        renderQuantityControls(productId, qty);
+  if (qty <= 0) {
+    const container = document.getElementById(`cart-${productId}`);
+    if (container) {
+      container.innerHTML = `
+        <button onclick="addToCart('${productId}')"
+        class="bg-[#8cc63f] text-white text-[11px] px-3 py-1 rounded-lg">
+          ADD
+        </button>
+      `;
     }
+  } else {
+    renderQuantityControls(productId, qty);
+  }
 
-    updateCartCount();
+  updateCartCount();
 }
 
 // 🔢 CART COUNT
 async function updateCartCount() {
-    const res = await fetch(`https://localkart-backend-hbou.onrender.com/api/cart/${USER_ID}`);
-    const cart = await res.json();
+  const res = await fetch(`https://localkart-backend-hbou.onrender.com/api/cart/${USER_ID}`);
+  const cart = await res.json();
 
-    let total = 0;
-    if (cart.items) {
-        cart.items.forEach(item => total += item.quantity);
-    }
+  let total = 0;
+  cart.items?.forEach(item => total += item.quantity);
 
-    document.getElementById("cartCount").innerText = total;
+  document.getElementById("cartCount").innerText = total;
 }
 
 updateCartCount();
 
 
-// 📍 USER LOCATION
+// 📍 SHOW LOCATION TEXT
 navigator.geolocation.getCurrentPosition(async (pos) => {
-    const lat = pos.coords.latitude;
-    const lng = pos.coords.longitude;
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&format=json`
+    );
 
-    try {
-        const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
-        );
-        const data = await res.json();
+    const data = await res.json();
 
-        document.getElementById("userLocation").innerText =
-            data.address.suburb || data.address.city || data.display_name;
+    document.getElementById("userLocation").innerText =
+      data.address.suburb || data.address.city || data.display_name;
 
-    } catch {
-        document.getElementById("userLocation").innerText = "Location unavailable";
-    }
-
-}, () => {
-    document.getElementById("userLocation").innerText = "Location denied";
+  } catch {
+    document.getElementById("userLocation").innerText = "Location unavailable";
+  }
 });
 
 
-// 🔥 LOAD PRODUCTS BY TAG
+// 🔥 LOAD PRODUCTS
 async function loadProductsByTag(tag) {
-    try {
-        products.forEach(p => {
+  try {
+    const res = await fetch(
+      `https://localkart-backend-hbou.onrender.com/api/products?tag=${tag}`
+    );
+
+    const products = await res.json();
+
+    const container = document.getElementById("productContainer");
+    container.innerHTML = "";
+
+    if (!products.length) {
+      container.innerHTML = "<p>No products available</p>";
+      return;
+    }
+
+    products.forEach(p => {
+
+    console.log("STORE:", p.store); // ✅ correct place
 
     let distanceText = "";
     let colorClass = "";
 
-    // ✅ check if location exists
     if (userLat && userLng && p.store?.location) {
-
         const dist = getDistance(
             userLat,
             userLng,
@@ -291,7 +296,6 @@ async function loadProductsByTag(tag) {
 
         const km = dist.toFixed(1);
 
-        // 🎨 COLOR LOGIC
         if (km <= 2) colorClass = "text-green-600";
         else if (km <= 8) colorClass = "text-yellow-500";
         else colorClass = "text-red-500";
@@ -300,73 +304,62 @@ async function loadProductsByTag(tag) {
     }
 
     container.innerHTML += `
-        <div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md">
+        <div class="border border-gray-100 rounded-xl p-3">
 
-            <div class="h-28 flex items-center justify-center mb-2">
-                <img src="https://localkart-backend-hbou.onrender.com${p.image}" 
-                     class="h-24 object-contain">
-            </div>
+            <img src="https://localkart-backend-hbou.onrender.com${encodeURI(p.image)}"
+            class="h-24 object-contain">
 
-            <h3 class="text-[12px] font-bold">${p.name}</h3>
-            <p class="text-[11px] text-gray-400">1 unit</p>
+            <h3>${p.name}</h3>
 
-            <div class="flex justify-between mt-2">
-                <span class="font-bold">₹${p.price}</span>
-            </div>
+            <p>₹${p.price}</p>
 
-            <!-- 🔥 DISTANCE -->
-            <p class="text-[10px] font-bold ${colorClass}">
+            <p class="${colorClass} text-xs font-bold">
                 ${distanceText}
             </p>
 
-            <div class="mt-2" id="cart-${p._id}">
-                <button onclick="addToCart('${p._id}')" 
-                class="bg-[#8cc63f] text-white text-[11px] px-3 py-1 rounded-lg">
-                    ADD
-                </button>
-            </div>
+            <button onclick="addToCart('${p._id}')">ADD</button>
 
         </div>
     `;
 });
 
-    } catch (err) {
-        console.log("LOAD ERROR:", err);
-    }
+
+
+  } catch (err) {
+    console.log("LOAD ERROR:", err);
+  }
 }
 
-// 🔥 DEFAULT LOAD
+// 🚀 DEFAULT LOAD
 loadProductsByTag("milk");
 
 
-// 🔍 SEARCH (LIVE)
+// 🔍 SEARCH
 document.querySelector("input").addEventListener("input", async (e) => {
-    const query = e.target.value;
+  const query = e.target.value;
 
-    if (!query) {
-        loadProductsByTag("milk");
-        return;
-    }
+  if (!query) return loadProductsByTag("milk");
 
-    const res = await fetch(
-        `https://localkart-backend-hbou.onrender.com/api/products?search=${query}`
-    );
+  const res = await fetch(
+    `https://localkart-backend-hbou.onrender.com/api/products?search=${query}`
+  );
 
-    const data = await res.json();
+  const data = await res.json();
 
-    const container = document.getElementById("productContainer");
-    container.innerHTML = "";
+  const container = document.getElementById("productContainer");
+  container.innerHTML = "";
 
-    data.forEach(p => {
-        container.innerHTML += `
-            <div class="border p-3">
-                <img src="https://localkart-backend-hbou.onrender.com${p.image}" class="h-24">
-                <h3>${p.name}</h3>
-                <p>₹${p.price}</p>
-            </div>
-        `;
-    });
+  data.forEach(p => {
+    container.innerHTML += `
+      <div class="border p-3">
+        <img src="https://localkart-backend-hbou.onrender.com${p.image}" class="h-24">
+        <h3>${p.name}</h3>
+        <p>₹${p.price}</p>
+      </div>
+    `;
+  });
 });
+
 </script>
 </body>
 </html>
