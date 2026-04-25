@@ -17,6 +17,15 @@
 <input id="name" type="text" placeholder="Product Name">
 <input id="price" type="number" placeholder="Price">
 <input id="image" type="file">
+<select id="tags" class="border p-2 rounded">
+  <option value="">Select Category</option>
+  <option value="milk">Milk</option>
+  <option value="bread">Bread & Pav</option>
+  <option value="eggs">Eggs</option>
+  <option value="cereals">Kellogg’s & Cereals</option>
+  <option value="muesli">Muesli & Granola</option>
+  <option value="daily">Everyday Items</option>
+</select>
 
 <button onclick="addProduct()">Add Product</button>
 
@@ -43,24 +52,31 @@ async function loadProducts() {
   const res = await fetch(`https://localkart-backend-hbou.onrender.com/api/products`);
   const products = await res.json();
 
-  const myProducts = products.filter(p => p.store === store.id);
+  const myProducts = products.filter(
+  p => p.store === store.id || p.store?._id === store.id
+);
 
   const container = document.getElementById("productList");
   container.innerHTML = "";
 
   myProducts.forEach(p => {
-    container.innerHTML += `
-      <div class="border p-3 mb-2 flex justify-between items-center">
+  container.innerHTML += `
+    <div class="border p-3 mb-2 flex justify-between items-center">
+      <div class="flex gap-3 items-center">
+        <img src="https://localkart-backend-hbou.onrender.com${p.image}" width="50">
+
         <div>
           <p class="font-bold">${p.name}</p>
           <p>₹${p.price}</p>
         </div>
-        <button onclick="deleteProduct('${p._id}')" class="bg-red-500 text-white px-3 py-1 rounded">
-          Delete
-        </button>
       </div>
-    `;
-  });
+
+      <button onclick="deleteProduct('${p._id}')" class="bg-red-500 text-white px-3 py-1 rounded">
+        Delete
+      </button>
+    </div>
+  `;
+});
 }
 
 // ➕ ADD PRODUCT
@@ -88,6 +104,14 @@ async function addProduct() {
   formData.append("name", name);
   formData.append("price", price);
   formData.append("image", image);
+  const tag = document.getElementById("tags").value;
+
+if (!tag) {
+  alert("Please select a category ❌");
+  return;
+}
+
+formData.append("tags", tag);
 
   // 🔥 get store from localStorage
   const store = JSON.parse(localStorage.getItem("store"));
@@ -109,6 +133,7 @@ async function addProduct() {
     }
 
     alert("✅ Product added successfully");
+    loadProducts(); // 🔥 ADD THIS
 
   } catch (err) {
     console.log(err);
