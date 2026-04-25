@@ -158,24 +158,19 @@ loadProducts();
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js">
 </script>
 <script>
-  // 🔔 SOCKET CONNECTION
 const socket = io("https://localkart-backend-hbou.onrender.com");
 
-// get store from localStorage
 const storeData = JSON.parse(localStorage.getItem("store"));
 const STORE_ID = storeData?.id;
 
-// join store room
 if (STORE_ID) {
   socket.emit("joinStore", STORE_ID);
   console.log("Joined store socket:", STORE_ID);
 }
 
-// listen for new orders
 socket.on("new-order", (data) => {
   console.log("NEW ORDER:", data);
 
-  // 🔥 simple UI
   const notif = document.createElement("div");
   notif.innerText = "🛒 New Order Received!";
   notif.className = "fixed top-5 right-5 bg-green-500 text-white px-4 py-2 rounded shadow-lg";
