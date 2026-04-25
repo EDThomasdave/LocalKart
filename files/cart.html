@@ -58,9 +58,10 @@ body { font-family: 'Inter', sans-serif; background-color: #a5b39c; }
                 Clear Cart
             </button>
 
-            <button class="w-full bg-[#24963f] text-white py-2 rounded-lg font-bold">
-                Checkout
-            </button>
+            <button onclick="checkout()" 
+class="bg-[#24963f] text-white px-6 py-3 rounded-lg font-bold w-full mt-4">
+  Place Order (COD)
+</button>
         </div>
 
     </div>
@@ -68,6 +69,41 @@ body { font-family: 'Inter', sans-serif; background-color: #a5b39c; }
 </main>
 
 <script>
+async function checkout() {
+  try {
+    const res = await fetch(`https://localkart-backend-hbou.onrender.com/api/cart/${USER_ID}`);
+    const cart = await res.json();
+
+    if (!cart.items || cart.items.length === 0) {
+      alert("Cart is empty");
+      return;
+    }
+
+    const store = cart.items[0]?.product?.store;
+
+    if (!store || !store.location) {
+      alert("Store location not found");
+      return;
+    }
+
+    alert("Order placed successfully (COD)");
+
+    const confirmNav = confirm("Navigate to store?");
+    if (confirmNav) {
+      openMaps(store.location.lat, store.location.lng);
+    }
+
+  } catch (err) {
+    console.log(err);
+    alert("Checkout failed");
+  }
+}
+
+function openMaps(lat, lng) {
+  const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+  window.open(url, "_blank");
+}
+
 
 // 🔐 USER
 const user = JSON.parse(localStorage.getItem("user"));
@@ -113,7 +149,11 @@ function renderCart(items) {
 
         const price = item.product?.price || 0;
         const name = item.product?.name || "Product";
-        const img = item.product?.image || "https://via.placeholder.com/80";
+        const img = item.product?.image
+  ? (item.product.image.startsWith("http")
+      ? item.product.image
+      : `https://localkart-backend-hbou.onrender.com${item.product.image}`)
+  : "https://via.placeholder.com/80";
         const qty = item.quantity;
 
         total += price * qty;

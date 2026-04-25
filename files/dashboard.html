@@ -303,24 +303,35 @@ async function loadProductsByTag(tag) {
         distanceText = `${km} km from you`;
     }
 
-    container.innerHTML += `
-        <div class="border border-gray-100 rounded-xl p-3">
+   container.innerHTML += `
+<div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md">
 
-            <img src="https://localkart-backend-hbou.onrender.com${encodeURI(p.image)}"
-            class="h-24 object-contain">
+    <div class="h-28 flex items-center justify-center mb-2">
+        <img src="${p.image}" class="h-24 object-contain">
+    </div>
 
-            <h3>${p.name}</h3>
+    <h3 class="text-[12px] font-bold">${p.name}</h3>
 
-            <p>₹${p.price}</p>
+    <p class="text-[11px] text-gray-400">1 unit</p>
 
-            <p class="${colorClass} text-xs font-bold">
-                ${distanceText}
-            </p>
+    <!-- ✅ DISTANCE -->
+    <p class="${colorClass} text-[10px] font-bold mt-1">
+        ${distanceText}
+    </p>
 
-            <button onclick="addToCart('${p._id}')">ADD</button>
+    <div class="flex justify-between mt-3">
+        <span class="font-bold">₹${p.price}</span>
 
+        <div id="cart-${p._id}">
+            <button onclick="addToCart('${p._id}')" 
+            class="bg-[#8cc63f] text-white text-[11px] px-3 py-1 rounded-lg">
+                ADD
+            </button>
         </div>
-    `;
+    </div>
+
+</div>
+`;
 });
 
 
@@ -331,7 +342,24 @@ async function loadProductsByTag(tag) {
 }
 
 // 🚀 DEFAULT LOAD
-loadProductsByTag("milk");
+// 📍 USER LOCATION + LOAD PRODUCTS (FINAL FIX)
+navigator.geolocation.getCurrentPosition(
+  async (pos) => {
+    userLat = pos.coords.latitude;
+    userLng = pos.coords.longitude;
+
+    console.log("USER LOCATION:", userLat, userLng);
+
+    // ✅ Load products AFTER location
+    loadProductsByTag("milk");
+  },
+  () => {
+    console.log("Location denied");
+
+    // fallback (still load products)
+    loadProductsByTag("milk");
+  }
+);
 
 
 // 🔍 SEARCH
