@@ -58,9 +58,10 @@ body { font-family: 'Inter', sans-serif; background-color: #a5b39c; }
                 Clear Cart
             </button>
 
-            <button class="w-full bg-[#24963f] text-white py-2 rounded-lg font-bold">
-                Checkout
-            </button>
+            <button onclick="checkout()" 
+class="bg-[#24963f] text-white px-6 py-3 rounded-lg font-bold w-full mt-4">
+  Place Order (COD)
+</button>
         </div>
 
     </div>
@@ -68,6 +69,75 @@ body { font-family: 'Inter', sans-serif; background-color: #a5b39c; }
 </main>
 
 <script>
+async function checkout() {
+  try {
+    const res = await fetch(`https://localkart-backend-hbou.onrender.com/api/cart/${USER_ID}`);
+    const cart = await res.json();
+
+    if (!cart.items || cart.items.length === 0) {
+      alert("Cart is empty");
+      return;
+    }
+
+    const firstItem = cart.items[0];
+
+    if (!firstItem.product) {
+      alert("Product data missing ❌");
+      return;
+    }
+
+    let store = firstItem.product.store;
+
+    // 🔥 FALLBACK (VERY IMPORTANT)
+    if (!store || !store.location) {
+      console.log("⚠️ Store not populated, refetching...");
+
+      const res2 = await fetch(
+        `https://localkart-backend-hbou.onrender.com/api/products?store=${firstItem.product.store}`
+      );
+
+      const data = await res2.json();
+
+      store = data[0]?.store;
+    }
+
+    if (!store || !store.location) {
+      alert("Store location not found ❌");
+      console.log("DEBUG STORE:", store);
+      return;
+    }
+
+    // 🔔 SEND ORDER
+    await fetch("https://localkart-backend-hbou.onrender.com/api/order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        storeId: store._id
+      })
+    });
+
+    alert("Order placed successfully (COD)");
+
+    const confirmNav = confirm("Navigate to store?");
+    if (confirmNav) {
+      openMaps(store.location.lat, store.location.lng);
+    }
+
+    // 🧹 clear cart after order
+    await clearCart();
+
+  } catch (err) {
+    console.log(err);
+    alert("Checkout failed");
+  }
+}
+function openMaps(lat, lng) {
+  const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+  window.open(url, "_blank");
+}
+
 
 // 🔐 USER
 const user = JSON.parse(localStorage.getItem("user"));
@@ -111,9 +181,15 @@ function renderCart(items) {
 
     items.forEach(item => {
 
+        if (!item.product) return;
+
         const price = item.product?.price || 0;
         const name = item.product?.name || "Product";
-        const img = item.product?.image || "https://via.placeholder.com/80";
+        const img = item.product?.image
+  ? (item.product.image.startsWith("http")
+      ? item.product.image
+      : `https://localkart-backend-hbou.onrender.com${item.product.image}`)
+  : "https://via.placeholder.com/80";
         const qty = item.quantity;
 
         total += price * qty;
@@ -122,30 +198,30 @@ function renderCart(items) {
         div.className = "flex items-center justify-between border p-3 rounded-lg";
 
         div.innerHTML = `
-            <div class="flex items-center gap-3">
-                <img src="${img}" class="w-16 h-16 object-contain">
+    <div class="flex items-center gap-3">
+        <img src="${img}" class="w-16 h-16 object-contain">
 
-                <div>
-                    <h3 class="font-bold text-sm">${name}</h3>
-                    <p class="text-gray-400 text-xs">₹${price}</p>
-                </div>
-            </div>
+        <div>
+            <h3 class="font-bold text-sm">${name}</h3>
+            <p class="text-gray-400 text-xs">₹${price}</p>
+        </div>
+    </div>
 
-            <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3">
 
-                <button onclick="decrease('${item.productId}', ${qty})"
-                class="px-2 bg-gray-200 rounded">-</button>
+        <button onclick="decrease('${item.product._id}')"
+        class="px-2 bg-gray-200 rounded">-</button>
 
-                <span class="font-bold">${qty}</span>
+        <span class="font-bold">${qty}</span>
 
-                <button onclick="increase('${item.productId}', ${qty})"
-                class="px-2 bg-gray-200 rounded">+</button>
+        <button onclick="increase('${item.product._id}')"
+        class="px-2 bg-gray-200 rounded">+</button>
 
-                <button onclick="removeItem('${item.productId}')"
-                class="text-red-500 text-sm ml-3">Remove</button>
+        <button onclick="removeItem('${item.product._id}')"
+        class="text-red-500 text-sm ml-3">Remove</button>
 
-            </div>
-        `;
+    </div>
+`;
 
         container.appendChild(div);
     });

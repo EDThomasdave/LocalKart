@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LocalKart - Exact Replica</title>
+    <title>LocalKart - Buy Milk</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -115,209 +115,279 @@
         </div>
     </div>
     <script>
+
+// 📍 DISTANCE FUNCTION
+function getDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+
+  const a =
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon/2) *
+    Math.sin(dLon/2);
+
+  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+}
+
+// 📍 USER LOCATION
+let userLat = null;
+let userLng = null;
+
+navigator.geolocation.getCurrentPosition(
+  (pos) => {
+    userLat = pos.coords.latitude;
+    userLng = pos.coords.longitude;
+  },
+  () => console.log("Location denied")
+);
+
 // 🔐 USER AUTH
 const user = JSON.parse(localStorage.getItem("user"));
 const USER_ID = user?.id;
 
 if (!USER_ID) {
-    alert("Please login first");
-    window.location.href = "login.html";
+  alert("Please login first");
+  window.location.href = "login.html";
 }
 
-// 🔓 LOGIN / LOGOUT BUTTON
+// 🔓 LOGIN BUTTON
 const loginBtn = document.getElementById("loginBtn");
 if (user) {
-    loginBtn.innerText = "Logout";
-    loginBtn.onclick = () => {
-        localStorage.clear();
-        window.location.href = "login.html";
-    };
+  loginBtn.innerText = "Logout";
+  loginBtn.onclick = () => {
+    localStorage.clear();
+    window.location.href = "login.html";
+  };
 }
 
 // 🛒 ADD TO CART
 async function addToCart(productId) {
-    await fetch("https://localkart-backend-hbou.onrender.com/api/cart/add", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            userId: USER_ID,
-            productId: productId
-        })
-    });
+  await fetch("https://localkart-backend-hbou.onrender.com/api/cart/add", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ userId: USER_ID, productId })
+  });
 
-    renderQuantityControls(productId, 1);
-    updateCartCount();
+  renderQuantityControls(productId, 1);
+  updateCartCount();
 }
 
-// ➕ UI UPDATE
+// 🔁 UI UPDATE
 function renderQuantityControls(productId, qty) {
-    const container = document.getElementById(`cart-${productId}`);
+  const container = document.getElementById(`cart-${productId}`);
+  if (!container) return;
 
-    container.innerHTML = `
-        <div class="flex items-center gap-2 bg-[#8cc63f] text-white px-2 py-1 rounded-lg">
-            <button onclick="decreaseQty('${productId}', ${qty})">-</button>
-            <span>${qty}</span>
-            <button onclick="increaseQty('${productId}', ${qty})">+</button>
-        </div>
-    `;
+  container.innerHTML = `
+    <div class="flex items-center gap-2 bg-[#8cc63f] text-white px-2 py-1 rounded-lg">
+      <button onclick="decreaseQty('${productId}', ${qty})">-</button>
+      <span>${qty}</span>
+      <button onclick="increaseQty('${productId}', ${qty})">+</button>
+    </div>
+  `;
 }
 
 // ➕ INCREASE
 async function increaseQty(productId, qty) {
-    qty++;
+  qty++;
 
-    await fetch("https://localkart-backend-hbou.onrender.com/api/cart/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: USER_ID, productId })
-    });
+  await fetch("https://localkart-backend-hbou.onrender.com/api/cart/add", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ userId: USER_ID, productId })
+  });
 
-    renderQuantityControls(productId, qty);
-    updateCartCount();
+  renderQuantityControls(productId, qty);
+  updateCartCount();
 }
 
 // ➖ DECREASE
 async function decreaseQty(productId, qty) {
-    qty--;
+  qty--;
 
-    await fetch("https://localkart-backend-hbou.onrender.com/api/cart/decrease", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: USER_ID, productId })
-    });
+  await fetch("https://localkart-backend-hbou.onrender.com/api/cart/decrease", {
+    method: "PUT",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ userId: USER_ID, productId })
+  });
 
-    if (qty <= 0) {
-        document.getElementById(`cart-${productId}`).innerHTML = `
-            <button onclick="addToCart('${productId}')" 
-            class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">
-                ADD
-            </button>
-        `;
-    } else {
-        renderQuantityControls(productId, qty);
+  if (qty <= 0) {
+    const container = document.getElementById(`cart-${productId}`);
+    if (container) {
+      container.innerHTML = `
+        <button onclick="addToCart('${productId}')"
+        class="bg-[#8cc63f] text-white text-[11px] px-3 py-1 rounded-lg">
+          ADD
+        </button>
+      `;
     }
+  } else {
+    renderQuantityControls(productId, qty);
+  }
 
-    updateCartCount();
+  updateCartCount();
 }
 
 // 🔢 CART COUNT
 async function updateCartCount() {
-    const res = await fetch(`https://localkart-backend-hbou.onrender.com/api/cart/${USER_ID}`);
-    const cart = await res.json();
+  const res = await fetch(`https://localkart-backend-hbou.onrender.com/api/cart/${USER_ID}`);
+  const cart = await res.json();
 
-    let total = 0;
-    if (cart.items) {
-        cart.items.forEach(item => total += item.quantity);
-    }
+  let total = 0;
+  cart.items?.forEach(item => total += item.quantity);
 
-    document.getElementById("cartCount").innerText = total;
+  document.getElementById("cartCount").innerText = total;
 }
 
 updateCartCount();
 
 
-// 📍 USER LOCATION
+// 📍 SHOW LOCATION TEXT
 navigator.geolocation.getCurrentPosition(async (pos) => {
-    const lat = pos.coords.latitude;
-    const lng = pos.coords.longitude;
-
-    try {
-        const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
-        );
-        const data = await res.json();
-
-        document.getElementById("userLocation").innerText =
-            data.address.suburb || data.address.city || data.display_name;
-
-    } catch {
-        document.getElementById("userLocation").innerText = "Location unavailable";
-    }
-
-}, () => {
-    document.getElementById("userLocation").innerText = "Location denied";
-});
-
-
-// 🔥 LOAD PRODUCTS BY TAG
-async function loadProductsByTag(tag) {
-    try {
-        const res = await fetch(`https://localkart-backend-hbou.onrender.com/api/products?tag=${tag}`);
-        const products = await res.json();
-
-        const container = document.getElementById("productContainer");
-        container.innerHTML = "";
-
-        if (products.length === 0) {
-            container.innerHTML = "<p>No products available</p>";
-            return;
-        }
-
-        products.forEach(p => {
-            container.innerHTML += `
-                <div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md">
-
-                    <div class="h-28 flex items-center justify-center mb-2">
-                        <img src="https://localkart-backend-hbou.onrender.com${p.image}" 
-                             class="h-24 object-contain">
-                    </div>
-
-                    <h3 class="text-[12px] font-bold">${p.name}</h3>
-                    <p class="text-[11px] text-gray-400">1 unit</p>
-
-                    <div class="flex justify-between mt-3">
-                        <span class="font-bold">₹${p.price}</span>
-
-                        <div id="cart-${p._id}">
-                            <button onclick="addToCart('${p._id}')" 
-                            class="bg-[#8cc63f] text-white text-[11px] px-3 py-1 rounded-lg">
-                                ADD
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-
-    } catch (err) {
-        console.log("LOAD ERROR:", err);
-    }
-}
-
-// 🔥 DEFAULT LOAD
-loadProductsByTag("milk");
-
-
-// 🔍 SEARCH (LIVE)
-document.querySelector("input").addEventListener("input", async (e) => {
-    const query = e.target.value;
-
-    if (!query) {
-        loadProductsByTag("milk");
-        return;
-    }
-
+  try {
     const res = await fetch(
-        `https://localkart-backend-hbou.onrender.com/api/products?search=${query}`
+      `https://nominatim.openstreetmap.org/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&format=json`
     );
 
     const data = await res.json();
 
+    document.getElementById("userLocation").innerText =
+      data.address.suburb || data.address.city || data.display_name;
+
+  } catch {
+    document.getElementById("userLocation").innerText = "Location unavailable";
+  }
+});
+
+
+// 🔥 LOAD PRODUCTS
+async function loadProductsByTag(tag) {
+  try {
+    const res = await fetch(
+      `https://localkart-backend-hbou.onrender.com/api/products?tag=${tag}`
+    );
+
+    const products = await res.json();
+
     const container = document.getElementById("productContainer");
     container.innerHTML = "";
 
-    data.forEach(p => {
-        container.innerHTML += `
-            <div class="border p-3">
-                <img src="https://localkart-backend-hbou.onrender.com${p.image}" class="h-24">
-                <h3>${p.name}</h3>
-                <p>₹${p.price}</p>
-            </div>
-        `;
-    });
+    if (!products.length) {
+      container.innerHTML = "<p>No products available</p>";
+      return;
+    }
+
+    products.forEach(p => {
+
+    console.log("STORE:", p.store); // ✅ correct place
+
+    let distanceText = "";
+    let colorClass = "";
+
+    if (userLat && userLng && p.store?.location) {
+        const dist = getDistance(
+            userLat,
+            userLng,
+            p.store.location.lat,
+            p.store.location.lng
+        );
+
+        const km = dist.toFixed(1);
+
+        if (km <= 2) colorClass = "text-green-600";
+        else if (km <= 8) colorClass = "text-yellow-500";
+        else colorClass = "text-red-500";
+
+        distanceText = `${km} km from you`;
+    }
+
+   container.innerHTML += `
+<div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md">
+
+    <div class="h-28 flex items-center justify-center mb-2">
+        <img src="${p.image}" class="h-24 object-contain">
+    </div>
+
+    <h3 class="text-[12px] font-bold">${p.name}</h3>
+
+    <p class="text-[11px] text-gray-400">1 unit</p>
+
+    <!-- ✅ DISTANCE -->
+    <p class="${colorClass} text-[10px] font-bold mt-1">
+        ${distanceText}
+    </p>
+
+    <div class="flex justify-between mt-3">
+        <span class="font-bold">₹${p.price}</span>
+
+        <div id="cart-${p._id}">
+            <button onclick="addToCart('${p._id}')" 
+            class="bg-[#8cc63f] text-white text-[11px] px-3 py-1 rounded-lg">
+                ADD
+            </button>
+        </div>
+    </div>
+
+</div>
+`;
 });
+
+
+
+  } catch (err) {
+    console.log("LOAD ERROR:", err);
+  }
+}
+
+// 🚀 DEFAULT LOAD
+// 📍 USER LOCATION + LOAD PRODUCTS (FINAL FIX)
+navigator.geolocation.getCurrentPosition(
+  async (pos) => {
+    userLat = pos.coords.latitude;
+    userLng = pos.coords.longitude;
+
+    console.log("USER LOCATION:", userLat, userLng);
+
+    // ✅ Load products AFTER location
+    loadProductsByTag("milk");
+  },
+  () => {
+    console.log("Location denied");
+
+    // fallback (still load products)
+    loadProductsByTag("milk");
+  }
+);
+
+
+// 🔍 SEARCH
+document.querySelector("input").addEventListener("input", async (e) => {
+  const query = e.target.value;
+
+  if (!query) return loadProductsByTag("milk");
+
+  const res = await fetch(
+    `https://localkart-backend-hbou.onrender.com/api/products?search=${query}`
+  );
+
+  const data = await res.json();
+
+  const container = document.getElementById("productContainer");
+  container.innerHTML = "";
+
+  data.forEach(p => {
+    container.innerHTML += `
+      <div class="border p-3">
+        <img src="https://localkart-backend-hbou.onrender.com${p.image}" class="h-24">
+        <h3>${p.name}</h3>
+        <p>₹${p.price}</p>
+      </div>
+    `;
+  });
+});
+
 </script>
 </body>
 </html>
