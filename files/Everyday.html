@@ -154,44 +154,210 @@ View Cart →
 </div>
 </a>
 
-<script>
-// USER
+    <script>
+// 🔐 USER AUTH
 const user = JSON.parse(localStorage.getItem("user"));
 const USER_ID = user?.id;
 
-// ADD TO CART (backend)
-async function addToCart(productId){
-
-await fetch("https://localkart-backend-hbou.onrender.com/api/cart/add",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({userId:USER_ID, productId})
-});
-
-updateCartCount();
+if (!USER_ID) {
+    alert("Please login first");
+    window.location.href = "login.html";
 }
 
-// CART COUNT
-async function updateCartCount(){
-const res = await fetch(`https://localkart-backend-hbou.onrender.com/api/cart/${USER_ID}`);
-const data = await res.json();
+// 🔓 LOGIN / LOGOUT BUTTON
+const loginBtn = document.getElementById("loginBtn");
+if (user) {
+    loginBtn.innerText = "Logout";
+    loginBtn.onclick = () => {
+        localStorage.clear();
+        window.location.href = "login.html";
+    };
+}
 
-let total = 0;
-data.items?.forEach(i=> total += i.quantity);
+// 🛒 ADD TO CART
+async function addToCart(productId) {
+    await fetch("https://localkart-backend-hbou.onrender.com/api/cart/add", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            userId: USER_ID,
+            productId: productId
+        })
+    });
 
-document.getElementById("cartCount").innerText = total;
+    renderQuantityControls(productId, 1);
+    updateCartCount();
+}
+
+// ➕ UI UPDATE
+function renderQuantityControls(productId, qty) {
+    const container = document.getElementById(`cart-${productId}`);
+
+    container.innerHTML = `
+        <div class="flex items-center gap-2 bg-[#8cc63f] text-white px-2 py-1 rounded-lg">
+            <button onclick="decreaseQty('${productId}', ${qty})">-</button>
+            <span>${qty}</span>
+            <button onclick="increaseQty('${productId}', ${qty})">+</button>
+        </div>
+    `;
+}
+
+// ➕ INCREASE
+async function increaseQty(productId, qty) {
+    qty++;
+
+    await fetch("https://localkart-backend-hbou.onrender.com/api/cart/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: USER_ID, productId })
+    });
+
+    renderQuantityControls(productId, qty);
+    updateCartCount();
+}
+
+// ➖ DECREASE
+async function decreaseQty(productId, qty) {
+    qty--;
+
+    await fetch("https://localkart-backend-hbou.onrender.com/api/cart/decrease", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: USER_ID, productId })
+    });
+
+    if (qty <= 0) {
+        document.getElementById(`cart-${productId}`).innerHTML = `
+            <button onclick="addToCart('${productId}')" 
+            class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">
+                ADD
+            </button>
+        `;
+    } else {
+        renderQuantityControls(productId, qty);
+    }
+
+    updateCartCount();
+}
+
+// 🔢 CART COUNT
+async function updateCartCount() {
+    const res = await fetch(`https://localkart-backend-hbou.onrender.com/api/cart/${USER_ID}`);
+    const cart = await res.json();
+
+    let total = 0;
+    if (cart.items) {
+        cart.items.forEach(item => total += item.quantity);
+    }
+
+    document.getElementById("cartCount").innerText = total;
 }
 
 updateCartCount();
 
-// SEARCH FILTER
-document.getElementById("searchBox").addEventListener("input", function(){
-let val = this.value.toLowerCase();
-document.querySelectorAll("#productGrid > div").forEach(card=>{
-card.style.display = card.innerText.toLowerCase().includes(val) ? "block" : "none";
+
+// 📍 USER LOCATION
+navigator.geolocation.getCurrentPosition(async (pos) => {
+    const lat = pos.coords.latitude;
+    const lng = pos.coords.longitude;
+
+    try {
+        const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+        );
+        const data = await res.json();
+
+        document.getElementById("userLocation").innerText =
+            data.address.suburb || data.address.city || data.display_name;
+
+    } catch {
+        document.getElementById("userLocation").innerText = "Location unavailable";
+    }
+
+}, () => {
+    document.getElementById("userLocation").innerText = "Location denied";
 });
+
+
+// 🔥 LOAD PRODUCTS BY TAG
+async function loadProductsByTag(tag) {
+    try {
+        const res = await fetch(`https://localkart-backend-hbou.onrender.com/api/products?tag=${tag}`);
+        const products = await res.json();
+
+        const container = document.getElementById("productContainer");
+        container.innerHTML = "";
+
+        if (products.length === 0) {
+            container.innerHTML = "<p>No products available</p>";
+            return;
+        }
+
+        products.forEach(p => {
+            container.innerHTML += `
+                <div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md">
+
+                    <div class="h-28 flex items-center justify-center mb-2">
+                        <img src="https://localkart-backend-hbou.onrender.com${p.image}" 
+                             class="h-24 object-contain">
+                    </div>
+
+                    <h3 class="text-[12px] font-bold">${p.name}</h3>
+                    <p class="text-[11px] text-gray-400">1 unit</p>
+
+                    <div class="flex justify-between mt-3">
+                        <span class="font-bold">₹${p.price}</span>
+
+                        <div id="cart-${p._id}">
+                            <button onclick="addToCart('${p._id}')" 
+                            class="bg-[#8cc63f] text-white text-[11px] px-3 py-1 rounded-lg">
+                                ADD
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+    } catch (err) {
+        console.log("LOAD ERROR:", err);
+    }
+}
+
+// 🔥 DEFAULT LOAD
+loadProductsByTag("milk");
+
+
+// 🔍 SEARCH (LIVE)
+document.querySelector("input").addEventListener("input", async (e) => {
+    const query = e.target.value;
+
+    if (!query) {
+        loadProductsByTag("milk");
+        return;
+    }
+
+    const res = await fetch(
+        `https://localkart-backend-hbou.onrender.com/api/products?search=${query}`
+    );
+
+    const data = await res.json();
+
+    const container = document.getElementById("productContainer");
+    container.innerHTML = "";
+
+    data.forEach(p => {
+        container.innerHTML += `
+            <div class="border p-3">
+                <img src="https://localkart-backend-hbou.onrender.com${p.image}" class="h-24">
+                <h3>${p.name}</h3>
+                <p>₹${p.price}</p>
+            </div>
+        `;
+    });
 });
 </script>
-
 </body>
 </html>
