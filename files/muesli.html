@@ -282,7 +282,7 @@ async function loadProductsByTag(tag) {
 }
 
 // 🔥 DEFAULT LOAD
-loadProductsByTag("milk");
+loadProductsByTag("muesli");
 
 
 // 🔍 SEARCH (LIVE)
@@ -290,7 +290,7 @@ document.querySelector("input").addEventListener("input", async (e) => {
     const query = e.target.value;
 
     if (!query) {
-        loadProductsByTag("milk");
+        loadProductsByTag("muesli");
         return;
     }
 
