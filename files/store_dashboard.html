@@ -32,6 +32,11 @@
 
 </div>
 
+<div class="bg-white p-4 rounded shadow mt-6">
+  <h2 class="font-bold mb-3 text-lg">Orders</h2>
+  <div id="orderList" class="space-y-3"></div>
+</div>
+
 <!-- PRODUCT LIST -->
 <div class="bg-white p-4 rounded shadow">
   <h2 class="font-bold mb-3">Your Products</h2>
@@ -40,6 +45,67 @@
 </div>
 
 <script>
+
+async function loadOrders() {
+  if (!STORE_ID) return; // 🔥 prevent crash
+
+  const res = await fetch(
+    `https://localkart-backend-hbou.onrender.com/api/order/store/${STORE_ID}`
+  );
+
+  const orders = await res.json();
+
+  const container = document.getElementById("orderList");
+  container.innerHTML = "";
+
+  if (!orders || orders.length === 0) {
+    container.innerHTML = "<p class='text-gray-400'>No orders yet</p>";
+    return;
+  }
+
+  orders.reverse().forEach(o => {
+    container.innerHTML += `
+      <div class="border rounded-lg p-3 shadow-sm bg-gray-50">
+
+        <div class="flex justify-between">
+          <p class="font-bold text-sm">Order #${o._id.slice(-5)}</p>
+          <span class="text-xs px-2 py-1 rounded 
+            ${o.status === "pending" ? "bg-yellow-200" :
+              o.status === "fulfilled" ? "bg-blue-200" :
+              "bg-green-200"}">
+            ${o.status}
+          </span>
+        </div>
+
+        <ul class="text-sm mt-2">
+          ${o.items.map(i => `<li>• ${i.name} x${i.quantity}</li>`).join("")}
+        </ul>
+
+        <p class="font-bold mt-2">Total: ₹${o.total}</p>
+
+        ${
+          o.status === "pending"
+            ? `<button onclick="fulfillOrder('${o._id}')"
+                class="bg-green-500 text-white px-3 py-1 rounded mt-2 text-sm">
+                Mark Fulfilled
+              </button>`
+            : ""
+        }
+
+      </div>
+    `;
+  });
+}
+
+async function fulfillOrder(orderId) {
+  await fetch(
+    `https://localkart-backend-hbou.onrender.com/api/order/fulfill/${orderId}`,
+    { method: "PUT" }
+  );
+
+  loadOrders();
+}
+
 const store = JSON.parse(localStorage.getItem("store"));
 
 if (!store) {
@@ -168,17 +234,27 @@ if (STORE_ID) {
   console.log("Joined store socket:", STORE_ID);
 }
 
-socket.on("new-order", (data) => {
-  console.log("NEW ORDER:", data);
+socket.on("new-order", (order) => {
+  console.log("New order received:", order);
 
+  // refresh orders instantly
+  loadOrders();
+
+  // popup
   const notif = document.createElement("div");
-  notif.innerText = "🛒 New Order Received!";
-  notif.className = "fixed top-5 right-5 bg-green-500 text-white px-4 py-2 rounded shadow-lg";
+  notif.innerText = "🛒 New Order!";
+  notif.className = "fixed top-5 right-5 bg-green-500 text-white px-4 py-2 rounded";
 
   document.body.appendChild(notif);
-
-  setTimeout(() => notif.remove(), 4000);
+  setTimeout(() => notif.remove(), 3000);
 });
+
+if (STORE_ID) {
+  socket.emit("joinStore", STORE_ID);
+  console.log("Joined store socket:", STORE_ID);
+
+  loadOrders(); // 🔥 load AFTER store is ready
+}
 </script>
 
 </body>
