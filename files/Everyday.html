@@ -100,61 +100,7 @@ body { font-family: 'Inter', sans-serif; background-color: #a5b39c; }
 
 <!-- PRODUCT -->
 <script>
-const products = [
-    {id:"e1", name:"Rice", price:120, dist:2,img:"./../media/product-images/Everyday-Items/Rice.png"},
-    {id:"e2", name:"Oil", price:150, dist:5,img:"./../media/product-images/Everyday-Items/Oil.png"},
-    {id:"e3", name:"Sugar", price:45, dist:9,img:"./../media/product-images/Everyday-Items/Sugar.png"},
-    {id:"e4", name:"Salt", price:20, dist:1,img:"./../media/product-images/Everyday-Items/Salt.png"},
-    {id:"e5", name:"Soap", price:60, dist:4,img:"./../media/product-images/Everyday-Items/Soap.png"},
-    {id:"e6", name:"Toothpaste", price:95, dist:6,img:"./../media/product-images/Everyday-Items/Toothpaste.png"},
-    {id:"e7", name:"Detergent", price:110, dist:3,img:"./../media/product-images/Everyday-Items/Detergent.png"},
-    {id:"e8", name:"Tea Powder", price:180, dist:7,img:"./../media/product-images/Everyday-Items/Tea Powder.png"}
-];
 
-const grid = document.getElementById("productGrid");
-
-products.forEach(p => {
-
-let color = "text-green-600";
-if(p.dist > 2 && p.dist <= 8) color = "text-yellow-500";
-if(p.dist > 8) color = "text-red-500";
-
-grid.innerHTML += `
-<div class="border rounded-xl p-3">
- <img src="${p.img}" class="h-20 mx-auto mb-2 object-contain">
-
-<div class="text-[10px] font-bold ${color}">${p.dist} km away</div>
-
-<h3 class="text-xs font-bold">${p.name}</h3>
-
-<div class="flex justify-between mt-3">
-<span>₹${p.price}</span>
-
-<div id="cart-${p.id}">
-<button onclick="addToCart('${p.id}')" 
-class="bg-[#8cc63f] text-white px-3 py-1 text-xs rounded">
-ADD
-</button>
-</div>
-
-</div>
-</div>
-`;
-});
-</script>
-
-</div>
-</section>
-</main>
-
-<!-- VIEW CART BAR -->
-<a href="./cart.html">
-<div class="fixed bottom-0 left-0 right-0 bg-[#24963f] text-white text-center py-2 font-bold">
-View Cart →
-</div>
-</a>
-
-    <script>
 // 🔐 USER AUTH
 const user = JSON.parse(localStorage.getItem("user"));
 const USER_ID = user?.id;
@@ -164,17 +110,7 @@ if (!USER_ID) {
     window.location.href = "login.html";
 }
 
-// 🔓 LOGIN / LOGOUT BUTTON
-const loginBtn = document.getElementById("loginBtn");
-if (user) {
-    loginBtn.innerText = "Logout";
-    loginBtn.onclick = () => {
-        localStorage.clear();
-        window.location.href = "login.html";
-    };
-}
-
-// 🛒 ADD TO CART
+// 🛒 CART
 async function addToCart(productId) {
     await fetch("https://localkart-backend-hbou.onrender.com/api/cart/add", {
         method: "POST",
@@ -191,7 +127,6 @@ async function addToCart(productId) {
     updateCartCount();
 }
 
-// ➕ UI UPDATE
 function renderQuantityControls(productId, qty) {
     const container = document.getElementById(`cart-${productId}`);
 
@@ -204,7 +139,6 @@ function renderQuantityControls(productId, qty) {
     `;
 }
 
-// ➕ INCREASE
 async function increaseQty(productId, qty) {
     qty++;
 
@@ -218,7 +152,6 @@ async function increaseQty(productId, qty) {
     updateCartCount();
 }
 
-// ➖ DECREASE
 async function decreaseQty(productId, qty) {
     qty--;
 
@@ -231,7 +164,7 @@ async function decreaseQty(productId, qty) {
     if (qty <= 0) {
         document.getElementById(`cart-${productId}`).innerHTML = `
             <button onclick="addToCart('${productId}')" 
-            class="bg-[#8cc63f] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-lg">
+            class="bg-[#8cc63f] text-white px-3 py-1 rounded-lg">
                 ADD
             </button>
         `;
@@ -242,7 +175,6 @@ async function decreaseQty(productId, qty) {
     updateCartCount();
 }
 
-// 🔢 CART COUNT
 async function updateCartCount() {
     const res = await fetch(`https://localkart-backend-hbou.onrender.com/api/cart/${USER_ID}`);
     const cart = await res.json();
@@ -258,36 +190,20 @@ async function updateCartCount() {
 updateCartCount();
 
 
-// 📍 USER LOCATION
-navigator.geolocation.getCurrentPosition(async (pos) => {
-    const lat = pos.coords.latitude;
-    const lng = pos.coords.longitude;
+// 🔥 CURRENT TAG (IMPORTANT)
+const CURRENT_TAG = "daily";
 
+
+// 🔥 LOAD PRODUCTS
+async function loadProducts() {
     try {
         const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+            `https://localkart-backend-hbou.onrender.com/api/products?tag=${CURRENT_TAG}`
         );
-        const data = await res.json();
 
-        document.getElementById("userLocation").innerText =
-            data.address.suburb || data.address.city || data.display_name;
-
-    } catch {
-        document.getElementById("userLocation").innerText = "Location unavailable";
-    }
-
-}, () => {
-    document.getElementById("userLocation").innerText = "Location denied";
-});
-
-
-// 🔥 LOAD PRODUCTS BY TAG
-async function loadProductsByTag(tag) {
-    try {
-        const res = await fetch(`https://localkart-backend-hbou.onrender.com/api/products?tag=${tag}`);
         const products = await res.json();
 
-        const container = document.getElementById("productContainer");
+        const container = document.getElementById("productGrid");
         container.innerHTML = "";
 
         if (products.length === 0) {
@@ -297,26 +213,24 @@ async function loadProductsByTag(tag) {
 
         products.forEach(p => {
             container.innerHTML += `
-                <div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md">
+                <div class="border rounded-xl p-3">
 
-                    <div class="h-28 flex items-center justify-center mb-2">
-                        <img src="https://localkart-backend-hbou.onrender.com${p.image}" 
-                             class="h-24 object-contain">
-                    </div>
+                    <img src="https://localkart-backend-hbou.onrender.com${p.image}" 
+                    class="h-20 mx-auto mb-2 object-contain">
 
-                    <h3 class="text-[12px] font-bold">${p.name}</h3>
-                    <p class="text-[11px] text-gray-400">1 unit</p>
+                    <h3 class="text-xs font-bold">${p.name}</h3>
 
                     <div class="flex justify-between mt-3">
-                        <span class="font-bold">₹${p.price}</span>
+                        <span>₹${p.price}</span>
 
                         <div id="cart-${p._id}">
                             <button onclick="addToCart('${p._id}')" 
-                            class="bg-[#8cc63f] text-white text-[11px] px-3 py-1 rounded-lg">
+                            class="bg-[#8cc63f] text-white px-3 py-1 text-xs rounded">
                                 ADD
                             </button>
                         </div>
                     </div>
+
                 </div>
             `;
         });
@@ -326,38 +240,40 @@ async function loadProductsByTag(tag) {
     }
 }
 
-// 🔥 DEFAULT LOAD
-loadProductsByTag("milk");
 
-
-// 🔍 SEARCH (LIVE)
-document.querySelector("input").addEventListener("input", async (e) => {
+// 🔍 SEARCH
+document.getElementById("searchBox").addEventListener("input", async (e) => {
     const query = e.target.value;
 
     if (!query) {
-        loadProductsByTag("milk");
+        loadProducts();
         return;
     }
 
     const res = await fetch(
-        `https://localkart-backend-hbou.onrender.com/api/products?search=${query}`
+        `https://localkart-backend-hbou.onrender.com/api/products?search=${query}&tag=${CURRENT_TAG}`
     );
 
     const data = await res.json();
 
-    const container = document.getElementById("productContainer");
+    const container = document.getElementById("productGrid");
     container.innerHTML = "";
 
     data.forEach(p => {
         container.innerHTML += `
             <div class="border p-3">
-                <img src="https://localkart-backend-hbou.onrender.com${p.image}" class="h-24">
+                <img src="https://localkart-backend-hbou.onrender.com${p.image}" class="h-20">
                 <h3>${p.name}</h3>
                 <p>₹${p.price}</p>
             </div>
         `;
     });
 });
+
+
+// 🚀 INIT
+loadProducts();
+
 </script>
 </body>
 </html>
