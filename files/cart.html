@@ -79,14 +79,35 @@ async function checkout() {
       return;
     }
 
-    const store = cart.items[0]?.product?.store;
+    const firstItem = cart.items[0];
 
-    if (!store || !store.location) {
-      alert("Store location not found");
+    if (!firstItem.product) {
+      alert("Product data missing ❌");
       return;
     }
 
-    // 🔔 👉 SEND NOTIFICATION TO BACKEND
+    let store = firstItem.product.store;
+
+    // 🔥 FALLBACK (VERY IMPORTANT)
+    if (!store || !store.location) {
+      console.log("⚠️ Store not populated, refetching...");
+
+      const res2 = await fetch(
+        `https://localkart-backend-hbou.onrender.com/api/products?store=${firstItem.product.store}`
+      );
+
+      const data = await res2.json();
+
+      store = data[0]?.store;
+    }
+
+    if (!store || !store.location) {
+      alert("Store location not found ❌");
+      console.log("DEBUG STORE:", store);
+      return;
+    }
+
+    // 🔔 SEND ORDER
     await fetch("https://localkart-backend-hbou.onrender.com/api/order", {
       method: "POST",
       headers: {
@@ -103,6 +124,9 @@ async function checkout() {
     if (confirmNav) {
       openMaps(store.location.lat, store.location.lng);
     }
+
+    // 🧹 clear cart after order
+    await clearCart();
 
   } catch (err) {
     console.log(err);
