@@ -14,159 +14,103 @@
 <div class="bg-white p-4 rounded shadow mb-6">
   <h2 class="font-bold mb-3">Add Product</h2>
 
-<input id="name" type="text" placeholder="Product Name">
-<input id="price" type="number" placeholder="Price">
-<input id="image" type="file">
-<select id="tags" class="border p-2 rounded">
-  <option value="">Select Category</option>
-  <option value="milk">Milk</option>
-  <option value="bread">Bread & Pav</option>
-  <option value="eggs">Eggs</option>
-  <option value="cereals">Kellogg’s & Cereals</option>
-  <option value="muesli">Muesli & Granola</option>
-  <option value="daily">Everyday Items</option>
-</select>
+  <input id="name" type="text" placeholder="Product Name" class="border p-2 mr-2">
+  <input id="price" type="number" placeholder="Price" class="border p-2 mr-2">
+  <input id="image" type="file" class="border p-2 mr-2">
 
-<button onclick="addProduct()">Add Product</button>
+  <select id="tags" class="border p-2 rounded">
+    <option value="">Select Category</option>
+    <option value="milk">Milk</option>
+    <option value="bread">Bread & Pav</option>
+    <option value="eggs">Eggs</option>
+    <option value="cereals">Cereals</option>
+    <option value="muesli">Muesli</option>
+    <option value="daily">Everyday Items</option>
+  </select>
 
-
+  <button onclick="addProduct()" class="bg-blue-500 text-white px-4 py-2 rounded ml-2">
+    Add Product
+  </button>
 </div>
 
+<!-- ORDERS -->
 <div class="bg-white p-4 rounded shadow mt-6">
   <h2 class="font-bold mb-3 text-lg">Orders</h2>
   <div id="orderList" class="space-y-3"></div>
 </div>
 
-<!-- PRODUCT LIST -->
+<!-- PRODUCTS -->
 <div class="bg-white p-4 rounded shadow">
   <h2 class="font-bold mb-3">Your Products</h2>
-
   <div id="productList"></div>
 </div>
 
 <script>
+const BASE_URL = "https://localkart-backend-hbou.onrender.com";
+
+// 🔥 STORE DATA
 const storeData = JSON.parse(localStorage.getItem("store"));
-const STORE_ID = storeData?.id;
-async function loadOrders() {
-  if (!STORE_ID) return; // 🔥 prevent crash
+const STORE_ID = storeData?._id;
 
-  const res = await fetch(
-    `https://localkart-backend-hbou.onrender.com/api/order/store/${STORE_ID}`
-  );
+console.log("STORE DATA:", storeData);
+console.log("STORE ID:", STORE_ID);
 
-  const orders = await res.json();
-
-  const container = document.getElementById("orderList");
-  container.innerHTML = "";
-
-  if (!orders || orders.length === 0) {
-    container.innerHTML = "<p class='text-gray-400'>No orders yet</p>";
-    return;
-  }
-
-  orders.reverse().forEach(o => {
-    container.innerHTML += `
-      <div class="border rounded-lg p-3 shadow-sm bg-gray-50">
-
-        <div class="flex justify-between">
-          <p class="font-bold text-sm">Order #${o._id.slice(-5)}</p>
-          <span class="text-xs px-2 py-1 rounded 
-            ${o.status === "pending" ? "bg-yellow-200" :
-              o.status === "fulfilled" ? "bg-blue-200" :
-              "bg-green-200"}">
-            ${o.status}
-          </span>
-        </div>
-
-        <ul class="text-sm mt-2">
-          ${o.items.map(i => `<li>• ${i.name} x${i.quantity}</li>`).join("")}
-        </ul>
-
-        <p class="font-bold mt-2">Total: ₹${o.total}</p>
-
-        ${
-          o.status === "pending"
-            ? `<button onclick="fulfillOrder('${o._id}')"
-                class="bg-green-500 text-white px-3 py-1 rounded mt-2 text-sm">
-                Mark Fulfilled
-              </button>`
-            : ""
-        }
-
-      </div>
-    `;
-  });
-}
-
-async function fulfillOrder(orderId) {
-  await fetch(
-    `https://localkart-backend-hbou.onrender.com/api/order/fulfill/${orderId}`,
-    { method: "PUT" }
-  );
-
-  loadOrders();
-}
-
-const store = JSON.parse(localStorage.getItem("store"));
-
-if (!store) {
+// 🔐 CHECK LOGIN
+if (!storeData || !STORE_ID) {
   alert("Login required");
-  window.location.href = "store-login.html";
+  window.location.href = "store_login.html";
 }
 
-// 🔥 LOAD PRODUCTS
+
+// 📦 LOAD PRODUCTS (STORE SPECIFIC)
 async function loadProducts() {
-  const res = await fetch(`https://localkart-backend-hbou.onrender.com/api/products`);
-  const products = await res.json();
+  try {
+    const res = await fetch(`${BASE_URL}/api/products/${STORE_ID}`);
+    if (!res.ok) throw new Error("Failed to fetch products");
 
-  const myProducts = products.filter(
-  p => p.store === store.id || p.store?._id === store.id
-);
+    const products = await res.json();
 
-  const container = document.getElementById("productList");
-  container.innerHTML = "";
+    const container = document.getElementById("productList");
+    container.innerHTML = "";
 
-  myProducts.forEach(p => {
-  container.innerHTML += `
-    <div class="border p-3 mb-2 flex justify-between items-center">
-      <div class="flex gap-3 items-center">
-        <img src="${
-  p.image.startsWith("http")
-    ? p.image
-    : `https://localkart-backend-hbou.onrender.com${p.image}`
-}" width="50">
+    products.forEach(p => {
+      container.innerHTML += `
+        <div class="border p-3 mb-2 flex justify-between items-center">
+          <div class="flex gap-3 items-center">
+            <img src="${
+              p.image.startsWith("http")
+                ? p.image
+                : `${BASE_URL}${p.image}`
+            }" width="50">
 
-        <div>
-          <p class="font-bold">${p.name}</p>
-          <p>₹${p.price}</p>
+            <div>
+              <p class="font-bold">${p.name}</p>
+              <p>₹${p.price}</p>
+            </div>
+          </div>
+
+          <button onclick="deleteProduct('${p._id}')" 
+            class="bg-red-500 text-white px-3 py-1 rounded">
+            Delete
+          </button>
         </div>
-      </div>
+      `;
+    });
 
-      <button onclick="deleteProduct('${p._id}')" class="bg-red-500 text-white px-3 py-1 rounded">
-        Delete
-      </button>
-    </div>
-  `;
-});
+  } catch (err) {
+    console.log("PRODUCT LOAD ERROR:", err);
+  }
 }
+
 
 // ➕ ADD PRODUCT
 async function addProduct() {
-  const nameInput = document.getElementById("name");
-  const priceInput = document.getElementById("price");
-  const imageInput = document.getElementById("image");
+  const name = document.getElementById("name").value;
+  const price = document.getElementById("price").value;
+  const image = document.getElementById("image").files[0];
+  const tag = document.getElementById("tags").value;
 
-  // 🔥 safety checks
-  if (!nameInput || !priceInput || !imageInput) {
-    alert("Input fields missing ❌");
-    return;
-  }
-
-  const name = nameInput.value;
-  const price = priceInput.value;
-  const image = imageInput.files[0];
-
-  if (!name || !price || !image) {
+  if (!name || !price || !image || !tag) {
     alert("Fill all fields ❌");
     return;
   }
@@ -175,88 +119,112 @@ async function addProduct() {
   formData.append("name", name);
   formData.append("price", price);
   formData.append("image", image);
-  const tag = document.getElementById("tags").value;
-
-if (!tag) {
-  alert("Please select a category ❌");
-  return;
-}
-
-formData.append("tags", tag);
-
-  // 🔥 get store from localStorage
-  const store = JSON.parse(localStorage.getItem("store"));
-  formData.append("store", store.id);
+  formData.append("tags", tag);
+  formData.append("store", STORE_ID); // ✅ FIXED
 
   try {
-    const res = await fetch("https://localkart-backend-hbou.onrender.com/api/products", {
+    const res = await fetch(`${BASE_URL}/api/products`, {
       method: "POST",
       body: formData
     });
 
-    const data = await res.json();
+    if (!res.ok) throw new Error("Failed to add");
 
-    console.log(data);
-
-    if (!res.ok) {
-      alert("❌ Failed to add product");
-      return;
-    }
-
-    alert("✅ Product added successfully");
-    loadProducts(); // 🔥 ADD THIS
+    alert("✅ Product added");
+    loadProducts();
 
   } catch (err) {
-    console.log(err);
+    console.log("ADD ERROR:", err);
     alert("Server error ❌");
   }
 }
 
+
 // ❌ DELETE PRODUCT
 async function deleteProduct(id) {
-  await fetch(`https://localkart-backend-hbou.onrender.com/api/products/${id}`, {
-    method: "DELETE"
-  });
-
-  alert("Deleted");
+  await fetch(`${BASE_URL}/api/products/${id}`, { method: "DELETE" });
   loadProducts();
 }
 
-loadProducts();
-console.log("Store ID:", STORE_ID);
 
-</script>
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js">
-</script>
-<script>
-const socket = io("https://localkart-backend-hbou.onrender.com");
+// 📦 LOAD ORDERS
+async function loadOrders() {
+  try {
+    const res = await fetch(`${BASE_URL}/api/order/store/${STORE_ID}`);
+    if (!res.ok) throw new Error("Failed to fetch orders");
+
+    const orders = await res.json();
+
+    const container = document.getElementById("orderList");
+    container.innerHTML = "";
+
+    if (!orders.length) {
+      container.innerHTML = "<p class='text-gray-400'>No orders yet</p>";
+      return;
+    }
+
+    orders.forEach(o => {
+      container.innerHTML += `
+        <div class="border rounded-lg p-3 bg-gray-50">
+
+          <div class="flex justify-between">
+            <p class="font-bold text-sm">Order #${o._id.slice(-5)}</p>
+            <span class="text-xs px-2 py-1 rounded bg-yellow-200">
+              ${o.status}
+            </span>
+          </div>
+
+          <ul class="text-sm mt-2">
+            ${o.items.map(i => `<li>• ${i.name} x${i.quantity}</li>`).join("")}
+          </ul>
+
+          <p class="font-bold mt-2">₹${o.total}</p>
+
+          ${
+            o.status === "pending"
+              ? `<button onclick="fulfillOrder('${o._id}')" 
+                class="bg-green-500 text-white px-3 py-1 rounded mt-2">
+                Mark Fulfilled
+              </button>`
+              : ""
+          }
+
+        </div>
+      `;
+    });
+
+  } catch (err) {
+    console.log("ORDER LOAD ERROR:", err);
+  }
+}
 
 
-
-
-socket.on("new-order", (order) => {
-  console.log("New order received:", order);
-
-  // refresh orders instantly
+// ✅ FULFILL ORDER
+async function fulfillOrder(orderId) {
+  await fetch(`${BASE_URL}/api/order/fulfill/${orderId}`, {
+    method: "PUT"
+  });
   loadOrders();
+}
 
-  // popup
-  const notif = document.createElement("div");
-  notif.innerText = "🛒 New Order!";
-  notif.className = "fixed top-5 right-5 bg-green-500 text-white px-4 py-2 rounded";
 
-  document.body.appendChild(notif);
-  setTimeout(() => notif.remove(), 3000);
+// 🔌 SOCKET
+const socket = io(BASE_URL);
+
+socket.on("new-order", () => {
+  loadOrders();
 });
 
-if (STORE_ID) {
-  socket.emit("joinStore", STORE_ID);
-  console.log("Joined store socket:", STORE_ID);
+socket.emit("joinStore", STORE_ID);
 
-  loadOrders(); // 🔥 load AFTER store is ready
-}
+
+// 🚀 INIT
+loadProducts();
+loadOrders();
 setInterval(loadOrders, 5000);
 </script>
+
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
 </body>
 </html>
