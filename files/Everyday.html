@@ -215,8 +215,9 @@ async function loadProducts() {
             container.innerHTML += `
                 <div class="border rounded-xl p-3">
 
-                    <img src="https://localkart-backend-hbou.onrender.com${p.image}" 
-                    class="h-20 mx-auto mb-2 object-contain">
+                    <div class="h-28 flex items-center justify-center mb-2">
+        <img src="${p.image}" class="h-24 object-contain">
+    </div>
 
                     <h3 class="text-xs font-bold">${p.name}</h3>
 

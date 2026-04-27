@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LocalKart - Buy Eggs</title>
+    <title>LocalKart - Buy Eggs
+    </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -251,10 +252,9 @@ async function loadProductsByTag(tag) {
             container.innerHTML += `
                 <div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md">
 
-                    <div class="h-28 flex items-center justify-center mb-2">
-                        <img src="https://localkart-backend-hbou.onrender.com${p.image}" 
-                             class="h-24 object-contain">
-                    </div>
+                   <div class="h-28 flex items-center justify-center mb-2">
+        <img src="${p.image}" class="h-24 object-contain">
+    </div>
 
                     <h3 class="text-[12px] font-bold">${p.name}</h3>
                     <p class="text-[11px] text-gray-400">1 unit</p>
