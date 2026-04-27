@@ -130,7 +130,11 @@ async function loadProducts() {
   container.innerHTML += `
     <div class="border p-3 mb-2 flex justify-between items-center">
       <div class="flex gap-3 items-center">
-        <img src="https://localkart-backend-hbou.onrender.com${p.image}" width="50">
+        <img src="${
+  p.image.startsWith("http")
+    ? p.image
+    : `https://localkart-backend-hbou.onrender.com${p.image}`
+}" width="50">
 
         <div>
           <p class="font-bold">${p.name}</p>
