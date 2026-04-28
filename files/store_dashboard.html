@@ -145,10 +145,10 @@ async function loadProducts() {
 
 // ADD PRODUCT
 async function addProduct() {
-  const name = nameInput.value;
-  const price = priceInput.value;
-  const image = imageInput.files[0];
-  const tag = tags.value;
+  const name = document.getElementById("name").value;
+  const price = document.getElementById("price").value;
+  const image = document.getElementById("image").files[0];
+  const tag = document.getElementById("tags").value;
 
   if (!name || !price || !image || !tag) {
     alert("Fill all fields ❌");
@@ -162,12 +162,27 @@ async function addProduct() {
   formData.append("tags", tag);
   formData.append("store", STORE_ID);
 
-  await fetch(`${BASE_URL}/api/products`, {
-    method: "POST",
-    body: formData
-  });
+  try {
+    const res = await fetch(`${BASE_URL}/api/products`, {  // ✅ FIX HERE
+      method: "POST",
+      body: formData
+    });
 
-  loadProducts();
+    const data = await res.json(); // 👈 useful for debugging
+    console.log("RESPONSE:", data);
+
+    if (!res.ok) {
+      alert(data.msg || "❌ Failed to add product");
+      return;
+    }
+
+    alert("✅ Product added");
+    loadProducts();
+
+  } catch (err) {
+    console.log("ADD ERROR:", err);
+    alert("Server error ❌");
+  }
 }
 
 // DELETE
