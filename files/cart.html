@@ -23,7 +23,6 @@ body { font-family: 'Inter', sans-serif; background-color: #a5b39c; }
         <span class="text-xl font-extrabold">LocalKart</span>
     </div>
 
-    <!-- SEARCH -->
     <div class="flex-1 max-w-lg mx-10">
         <input id="searchCart" type="text" placeholder="Search in cart..."
         class="w-full border rounded-lg px-4 py-2 text-sm">
@@ -40,28 +39,24 @@ body { font-family: 'Inter', sans-serif; background-color: #a5b39c; }
 
         <h2 class="text-lg font-extrabold mb-4">My Cart</h2>
 
-        <!-- CART ITEMS -->
         <div id="cartItems" class="space-y-4"></div>
 
-        <!-- EMPTY STATE -->
         <p id="emptyText" class="text-center text-gray-400 hidden">Your cart is empty</p>
 
-        <!-- TOTAL -->
         <div class="border-t mt-6 pt-4 flex justify-between items-center">
             <span class="text-lg font-bold">Total:</span>
             <span id="totalPrice" class="text-xl font-extrabold">₹0</span>
         </div>
 
-        <!-- BUTTONS -->
         <div class="flex gap-3 mt-4">
             <button onclick="clearCart()" class="w-full bg-gray-200 py-2 rounded-lg font-bold">
                 Clear Cart
             </button>
 
             <button onclick="checkout()" 
-class="bg-[#24963f] text-white px-6 py-3 rounded-lg font-bold w-full mt-4">
-  Place Order (COD)
-</button>
+            class="bg-[#24963f] text-white px-6 py-3 rounded-lg font-bold w-full">
+              Place Order (COD)
+            </button>
         </div>
 
     </div>
@@ -69,9 +64,24 @@ class="bg-[#24963f] text-white px-6 py-3 rounded-lg font-bold w-full mt-4">
 </main>
 
 <script>
+const BASE_URL = "https://localkart-backend-hbou.onrender.com";
+
+// 🔐 USER
+const user = JSON.parse(localStorage.getItem("user"));
+const USER_ID = user?._id;
+
+if (!USER_ID) {
+    alert("Login required");
+    window.location.href = "login.html";
+}
+
+let fullCart = [];
+
+
+// 🛒 CHECKOUT
 async function checkout() {
   try {
-    const res = await fetch(`https://localkart-backend-hbou.onrender.com/api/cart/${USER_ID}`);
+    const res = await fetch(`${BASE_URL}/api/cart/${USER_ID}`);
     const cart = await res.json();
 
     if (!cart.items || cart.items.length === 0) {
@@ -81,28 +91,21 @@ async function checkout() {
 
     const firstItem = cart.items[0];
 
-    if (!firstItem.product) {
-      alert("Product data missing ❌");
-      return;
-    }
+    let store = firstItem.product?.store;
 
-    let store = firstItem.product.store;
-
-    // 🔥 FALLBACK (keep this)
+    // 🔥 fallback
     if (!store || !store.location) {
-      const res2 = await fetch(
-        `https://localkart-backend-hbou.onrender.com/api/products?store=${firstItem.product.store}`
-      );
+      const res2 = await fetch(`${BASE_URL}/api/products?store=${firstItem.product.store}`);
       const data = await res2.json();
       store = data[0]?.store;
     }
 
-    if (!store || !store.location) {
-      alert("Store location not found ❌");
+    if (!store || !store._id) {
+      alert("Store data missing ❌");
       return;
     }
 
-    // 🔥 BUILD ORDER DATA (IMPORTANT)
+    // 🧾 BUILD ORDER
     const orderData = {
       userId: USER_ID,
       storeId: store._id,
@@ -117,40 +120,27 @@ async function checkout() {
       )
     };
 
-    console.log("ORDER DATA:", orderData);
-
-    // 🔔 SEND ORDER
-    const orderRes = await fetch(
-      "https://localkart-backend-hbou.onrender.com/api/order",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(orderData)
-      }
-    );
+    // 📤 SEND ORDER
+    const orderRes = await fetch(`${BASE_URL}/api/order`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orderData)
+    });
 
     if (!orderRes.ok) {
       alert("Order failed ❌");
       return;
     }
 
-    alert("Order placed successfully (COD)");
+    const order = await orderRes.json();
 
-    // 🧹 CLEAR CART (optional but recommended)
-    await fetch(
-      `https://localkart-backend-hbou.onrender.com/api/cart/clear?userId=${USER_ID}`,
-      { method: "DELETE" }
-    );
+    // 🧹 CLEAR CART
+    await fetch(`${BASE_URL}/api/cart/clear?userId=${USER_ID}`, {
+      method: "DELETE"
+    });
 
-    loadCart();
-
-    // 🗺 MAP NAVIGATION
-    const confirmNav = confirm("Navigate to store?");
-    if (confirmNav) {
-      openMaps(store.location.lat, store.location.lng);
-    }
+    // 🚀 REDIRECT TO ORDER PAGE
+    window.location.href = `order.html?orderId=${order._id}`;
 
   } catch (err) {
     console.log(err);
@@ -159,35 +149,17 @@ async function checkout() {
 }
 
 
-function openMaps(lat, lng) {
-  const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
-  window.open(url, "_blank");
-}
-
-
-// 🔐 USER
-const user = JSON.parse(localStorage.getItem("user"));
-const USER_ID = user?.id;
-
-if (!USER_ID) {
-    alert("Login required");
-    window.location.href = "login.html";
-}
-
-let fullCart = [];
-
 // 📦 LOAD CART
 async function loadCart() {
-
-    const res = await fetch(`https://localkart-backend-hbou.onrender.com/api/cart/${USER_ID}`);
+    const res = await fetch(`${BASE_URL}/api/cart/${USER_ID}`);
     const data = await res.json();
 
     fullCart = data.items || [];
-
     renderCart(fullCart);
 }
 
-// 🎨 RENDER
+
+// 🎨 RENDER CART
 function renderCart(items) {
 
     const container = document.getElementById("cartItems");
@@ -209,13 +181,14 @@ function renderCart(items) {
 
         if (!item.product) return;
 
-        const price = item.product?.price || 0;
-        const name = item.product?.name || "Product";
-        const img = item.product?.image
-  ? (item.product.image.startsWith("http")
-      ? item.product.image
-      : `https://localkart-backend-hbou.onrender.com${item.product.image}`)
-  : "https://via.placeholder.com/80";
+        const price = item.product.price || 0;
+        const name = item.product.name || "Product";
+        const img = item.product.image
+          ? (item.product.image.startsWith("http")
+              ? item.product.image
+              : `${BASE_URL}${item.product.image}`)
+          : "https://via.placeholder.com/80";
+
         const qty = item.quantity;
 
         total += price * qty;
@@ -224,30 +197,21 @@ function renderCart(items) {
         div.className = "flex items-center justify-between border p-3 rounded-lg";
 
         div.innerHTML = `
-    <div class="flex items-center gap-3">
-        <img src="${img}" class="w-16 h-16 object-contain">
-
-        <div>
-            <h3 class="font-bold text-sm">${name}</h3>
-            <p class="text-gray-400 text-xs">₹${price}</p>
+        <div class="flex items-center gap-3">
+            <img src="${img}" class="w-16 h-16 object-contain">
+            <div>
+                <h3 class="font-bold text-sm">${name}</h3>
+                <p class="text-gray-400 text-xs">₹${price}</p>
+            </div>
         </div>
-    </div>
 
-    <div class="flex items-center gap-3">
-
-        <button onclick="decrease('${item.product._id}')"
-        class="px-2 bg-gray-200 rounded">-</button>
-
-        <span class="font-bold">${qty}</span>
-
-        <button onclick="increase('${item.product._id}')"
-        class="px-2 bg-gray-200 rounded">+</button>
-
-        <button onclick="removeItem('${item.product._id}')"
-        class="text-red-500 text-sm ml-3">Remove</button>
-
-    </div>
-`;
+        <div class="flex items-center gap-3">
+            <button onclick="decrease('${item.product._id}')" class="px-2 bg-gray-200 rounded">-</button>
+            <span class="font-bold">${qty}</span>
+            <button onclick="increase('${item.product._id}')" class="px-2 bg-gray-200 rounded">+</button>
+            <button onclick="removeItem('${item.product._id}')" class="text-red-500 text-sm ml-3">Remove</button>
+        </div>
+        `;
 
         container.appendChild(div);
     });
@@ -255,47 +219,48 @@ function renderCart(items) {
     document.getElementById("totalPrice").innerText = "₹" + total;
 }
 
+
 // ➕ INCREASE
 async function increase(id) {
-    await fetch("https://localkart-backend-hbou.onrender.com/api/cart/add", {
+    await fetch(`${BASE_URL}/api/cart/add`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ userId: USER_ID, productId: id })
     });
-
     loadCart();
 }
 
+
 // ➖ DECREASE
 async function decrease(id) {
-    await fetch("https://localkart-backend-hbou.onrender.com/api/cart/decrease", {
+    await fetch(`${BASE_URL}/api/cart/decrease`, {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ userId: USER_ID, productId: id })
     });
-
     loadCart();
 }
 
-// ❌ REMOVE
+
+// ❌ REMOVE ITEM
 async function removeItem(id) {
-    await fetch("https://localkart-backend-hbou.onrender.com/api/cart/remove", {
+    await fetch(`${BASE_URL}/api/cart/remove`, {
         method: "DELETE",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ userId: USER_ID, productId: id })
     });
-
     loadCart();
 }
+
 
 // 🧹 CLEAR CART
 async function clearCart() {
-    await fetch(`https://localkart-backend-hbou.onrender.com/api/cart/clear?userId=${USER_ID}`, {
-  method: "DELETE"
-});
-
+    await fetch(`${BASE_URL}/api/cart/clear?userId=${USER_ID}`, {
+        method: "DELETE"
+    });
     loadCart();
 }
+
 
 // 🔍 SEARCH
 document.getElementById("searchCart").addEventListener("input", function() {
@@ -307,6 +272,7 @@ document.getElementById("searchCart").addEventListener("input", function() {
 
     renderCart(filtered);
 });
+
 
 // 🚀 INIT
 loadCart();

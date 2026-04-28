@@ -128,35 +128,67 @@
   </footer>
 
 <script>
+const BASE_URL = "https://localkart-backend-hbou.onrender.com";
+
 async function loginUser() {
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
+  const btn = document.getElementById("loginBtn");
 
-  const res = await fetch("https://localkart-backend-hbou.onrender.com/api/auth/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ email, password })
-  });
-
-  const data = await res.json();
-
-  console.log(data);
-
-  // ❌ If login failed
-  if (!res.ok) {
-    alert(data.msg || "Login failed");
+  // 🛑 validation
+  if (!email || !password) {
+    alert("Please fill all fields");
     return;
   }
 
-  // ✅ FIX HERE 🔥
-  localStorage.setItem("token", data.token);
-  localStorage.setItem("user", JSON.stringify(data.user)); // 👈 ADD THIS
+  try {
+    btn.disabled = true;
+    btn.innerText = "Logging in...";
 
-  alert("Login successful!");
+    const res = await fetch(`${BASE_URL}/api/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email, password })
+    });
 
-  window.location.href = "dashboard.html";
+    const data = await res.json();
+    console.log("LOGIN RESPONSE:", data);
+
+    // ❌ login failed
+    if (!res.ok) {
+      alert(data.msg || "Login failed");
+      btn.disabled = false;
+      btn.innerText = "Login";
+      return;
+    }
+
+    // ✅ SAFETY CHECK
+    if (!data.user || !data.user._id) {
+      alert("Invalid login response ❌");
+      return;
+    }
+
+    // 🔥 SAVE DATA (FINAL FIX)
+    localStorage.setItem("user", JSON.stringify(data.user));
+    localStorage.setItem("token", data.token);
+
+    console.log("Saved user:", data.user);
+
+    // ✅ SUCCESS
+    alert("Login successful!");
+
+    // 🔄 redirect (change if needed)
+    window.location.href = "./dashboard.html";
+
+  } catch (err) {
+    console.log("LOGIN ERROR:", err);
+    alert("Server error ❌");
+  } finally {
+    btn.disabled = false;
+    btn.innerText = "Login";
+  }
 }
 </script>
 

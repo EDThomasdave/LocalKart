@@ -47,10 +47,34 @@
         </div>
 
         <div class="flex items-center gap-6">
-            <button href="./login.html" class="text-[14px] font-semibold text-gray-600" id="loginBtn">Login</button>
-            <button class="bg-white border border-gray-200 px-4 py-2 rounded-lg flex items-center gap-2 text-[13px] font-bold text-gray-700 shadow-sm">
-                <i class="fas fa-shopping-cart text-[#24963f]" href="./cart.html"></i> My Cart (<span id="cartCount">0</span>)
-            </button>
+            <div class="relative">
+
+  <div id="profileBtn"
+    class="w-9 h-9 bg-[#24963f] text-white rounded-full flex items-center justify-center font-bold cursor-pointer">
+    U
+  </div>
+
+  <div id="dropdownMenu"
+    class="hidden absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg z-50">
+
+    <button id="orderHistoryBtn"
+      class="block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
+      Order History
+    </button>
+
+    <button id="logoutBtn"
+      class="block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm text-red-500">
+      Logout
+    </button>
+
+  </div>
+
+</div>
+            <a href="./cart.html"
+class="bg-white border border-gray-200 px-4 py-2 rounded-lg flex items-center gap-2 text-[13px] font-bold text-gray-700 shadow-sm">
+    <i class="fas fa-shopping-cart text-[#24963f]"></i>
+    My Cart (<span id="cartCount">0</span>)
+</a>
         </div>
     </header>
 
@@ -114,7 +138,8 @@
             <i class="fas fa-chevron-right text-white text-[10px] mt-1"></i>
         </div>
     </div>
-    <script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script>
 
 // 📍 DISTANCE FUNCTION
 function getDistance(lat1, lon1, lat2, lon2) {
@@ -136,32 +161,45 @@ function getDistance(lat1, lon1, lat2, lon2) {
 let userLat = null;
 let userLng = null;
 
-navigator.geolocation.getCurrentPosition(
-  (pos) => {
-    userLat = pos.coords.latitude;
-    userLng = pos.coords.longitude;
-  },
-  () => console.log("Location denied")
-);
-
-// 🔐 USER AUTH
+// 🔐 USER AUTH (🔥 FIXED)
 const user = JSON.parse(localStorage.getItem("user"));
-const USER_ID = user?.id;
+const USER_ID = user?._id || user?.id;
 
 if (!USER_ID) {
-  alert("Please login first");
-  window.location.href = "login.html";
+  window.location.href = "login.html"; // adjust if needed
 }
 
-// 🔓 LOGIN BUTTON
-const loginBtn = document.getElementById("loginBtn");
-if (user) {
-  loginBtn.innerText = "Logout";
-  loginBtn.onclick = () => {
-    localStorage.clear();
-    window.location.href = "login.html";
-  };
+// 👤 PROFILE DROPDOWN
+const profileBtn = document.getElementById("profileBtn");
+const dropdown = document.getElementById("dropdownMenu");
+
+// set initial
+if (user?.name) {
+  profileBtn.innerText = user.name.charAt(0).toUpperCase();
 }
+
+// toggle
+profileBtn.onclick = () => {
+  dropdown.classList.toggle("hidden");
+};
+
+// logout
+document.getElementById("logoutBtn").onclick = () => {
+  localStorage.clear();
+  window.location.href = "login.html";
+};
+
+// order history
+document.getElementById("orderHistoryBtn").onclick = () => {
+  window.location.href = "order.html";
+};
+
+// close on outside click
+window.addEventListener("click", (e) => {
+  if (!profileBtn.contains(e.target) && !dropdown.contains(e.target)) {
+    dropdown.classList.add("hidden");
+  }
+});
 
 // 🛒 ADD TO CART
 async function addToCart(productId) {
@@ -232,23 +270,29 @@ async function decreaseQty(productId, qty) {
 
 // 🔢 CART COUNT
 async function updateCartCount() {
-  const res = await fetch(`https://localkart-backend-hbou.onrender.com/api/cart/${USER_ID}`);
-  const cart = await res.json();
+  try {
+    const res = await fetch(`https://localkart-backend-hbou.onrender.com/api/cart/${USER_ID}`);
+    const cart = await res.json();
 
-  let total = 0;
-  cart.items?.forEach(item => total += item.quantity);
+    let total = 0;
+    cart.items?.forEach(item => total += item.quantity);
 
-  document.getElementById("cartCount").innerText = total;
+    document.getElementById("cartCount").innerText = total;
+  } catch (err) {
+    console.log("Cart count error:", err);
+  }
 }
 
 updateCartCount();
 
-
-// 📍 SHOW LOCATION TEXT
+// 📍 LOCATION TEXT
 navigator.geolocation.getCurrentPosition(async (pos) => {
   try {
+    userLat = pos.coords.latitude;
+    userLng = pos.coords.longitude;
+
     const res = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&format=json`
+      `https://nominatim.openstreetmap.org/reverse?lat=${userLat}&lon=${userLng}&format=json`
     );
 
     const data = await res.json();
@@ -256,11 +300,14 @@ navigator.geolocation.getCurrentPosition(async (pos) => {
     document.getElementById("userLocation").innerText =
       data.address.suburb || data.address.city || data.display_name;
 
+    // 🔥 LOAD PRODUCTS AFTER LOCATION
+    loadProductsByTag("milk");
+
   } catch {
     document.getElementById("userLocation").innerText = "Location unavailable";
+    loadProductsByTag("milk");
   }
 });
-
 
 // 🔥 LOAD PRODUCTS
 async function loadProductsByTag(tag) {
@@ -281,17 +328,15 @@ async function loadProductsByTag(tag) {
 
     products.forEach(p => {
 
-    console.log("STORE:", p.store); // ✅ correct place
+      let distanceText = "";
+      let colorClass = "";
 
-    let distanceText = "";
-    let colorClass = "";
-
-    if (userLat && userLng && p.store?.location) {
+      if (userLat && userLng && p.store?.location) {
         const dist = getDistance(
-            userLat,
-            userLng,
-            p.store.location.lat,
-            p.store.location.lng
+          userLat,
+          userLng,
+          p.store.location.lat,
+          p.store.location.lng
         );
 
         const km = dist.toFixed(1);
@@ -301,9 +346,9 @@ async function loadProductsByTag(tag) {
         else colorClass = "text-red-500";
 
         distanceText = `${km} km from you`;
-    }
+      }
 
-   container.innerHTML += `
+      container.innerHTML += `
 <div class="border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md">
 
     <div class="h-28 flex items-center justify-center mb-2">
@@ -314,7 +359,6 @@ async function loadProductsByTag(tag) {
 
     <p class="text-[11px] text-gray-400">1 unit</p>
 
-    <!-- ✅ DISTANCE -->
     <p class="${colorClass} text-[10px] font-bold mt-1">
         ${distanceText}
     </p>
@@ -331,36 +375,13 @@ async function loadProductsByTag(tag) {
     </div>
 
 </div>
-`;
-});
-
-
+      `;
+    });
 
   } catch (err) {
     console.log("LOAD ERROR:", err);
   }
 }
-
-// 🚀 DEFAULT LOAD
-// 📍 USER LOCATION + LOAD PRODUCTS (FINAL FIX)
-navigator.geolocation.getCurrentPosition(
-  async (pos) => {
-    userLat = pos.coords.latitude;
-    userLng = pos.coords.longitude;
-
-    console.log("USER LOCATION:", userLat, userLng);
-
-    // ✅ Load products AFTER location
-    loadProductsByTag("milk");
-  },
-  () => {
-    console.log("Location denied");
-
-    // fallback (still load products)
-    loadProductsByTag("milk");
-  }
-);
-
 
 // 🔍 SEARCH
 document.querySelector("input").addEventListener("input", async (e) => {
@@ -387,7 +408,13 @@ document.querySelector("input").addEventListener("input", async (e) => {
     `;
   });
 });
+const socket = io("https://localkart-backend-hbou.onrender.com");
 
+socket.on("order-updated", (order) => {
+  if (order.userId === USER_ID) {
+    alert("Your order has been fulfilled 🎉");
+  }
+});
 </script>
 </body>
 </html>
