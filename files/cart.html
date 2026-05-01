@@ -89,13 +89,23 @@ async function checkout() {
       return;
     }
 
-    const firstItem = cart.items[0];
+    // 🔥 remove invalid products
+    const validItems = cart.items.filter(i => i.product);
+
+    if (validItems.length === 0) {
+      alert("Cart has invalid items ❌");
+      return;
+    }
+
+    const firstItem = validItems[0];
 
     let store = firstItem.product?.store;
 
-    // 🔥 fallback
+    // 🔥 SAFE fallback
     if (!store || !store.location) {
-      const res2 = await fetch(`${BASE_URL}/api/products?store=${firstItem.product.store}`);
+      const res2 = await fetch(
+        `${BASE_URL}/api/products?store=${firstItem.product?.store}`
+      );
       const data = await res2.json();
       store = data[0]?.store;
     }
@@ -109,42 +119,46 @@ async function checkout() {
     const orderData = {
       userId: USER_ID,
       storeId: store._id,
-      items: cart.items.map(i => ({
+      items: validItems.map(i => ({
         name: i.product.name,
         price: i.product.price,
         quantity: i.quantity
       })),
-      total: cart.items.reduce(
+      total: validItems.reduce(
         (sum, i) => sum + i.product.price * i.quantity,
         0
       )
     };
 
+    console.log("ORDER DATA:", orderData); // 🔍 debug
+
     // 📤 SEND ORDER
     const orderRes = await fetch(`${BASE_URL}/api/order`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify(orderData)
     });
 
+    const order = await orderRes.json();
+
     if (!orderRes.ok) {
-      alert("Order failed ❌");
+      alert(order.msg || "Order failed ❌");
       return;
     }
-
-    const order = await orderRes.json();
 
     // 🧹 CLEAR CART
     await fetch(`${BASE_URL}/api/cart/clear?userId=${USER_ID}`, {
       method: "DELETE"
     });
 
-    // 🚀 REDIRECT TO ORDER PAGE
+    // 🚀 REDIRECT
     window.location.href = `order.html?orderId=${order._id}`;
 
   } catch (err) {
-    console.log(err);
-    alert("Checkout failed");
+    console.log("CHECKOUT ERROR:", err);
+    alert("Checkout failed ❌");
   }
 }
 
